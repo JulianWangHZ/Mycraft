@@ -8,6 +8,6 @@ test('picture-in-picture layout switches between office and board', async ({ pag
   await page.getByRole('tab', { name: 'Board' }).click();
   await expect(page.getByRole('heading', { name: /Needs you/ })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Add task' })).toHaveCount(0);
-  await page.getByRole('tab', { name: 'My interns' }).click();
+  await page.getByRole('tab', { name: 'My world' }).click();
   await expect(page.locator('.island-stage canvas')).toBeVisible();
 });
