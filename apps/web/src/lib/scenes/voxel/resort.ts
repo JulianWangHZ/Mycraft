@@ -17,27 +17,39 @@ const FLAT: readonly Rect[] = [
   { x1: DECK.x1 - 1.5, x2: DECK.x2 + 1.5, z1: HOTEL.z1 - 1.5, z2: DECK.z2 + 0.5 },
 ];
 
-/** Sea in front, palm woods either side and the hills behind the hotel. */
+/**
+ * An island resort: open sea in front and round both sides, and low palm-covered dunes behind
+ * the hotel. No hills, no rock: nothing but sand, palms and water.
+ */
 const RESORT_BIOMES: BiomeLayout = {
-  mountains: { bearing: 0, spread: 0.6 },
-  forest: { bearing: -1.4, spread: 0.6 },
-  plains: { bearing: 1.4, spread: 0.6 },
-  ocean: { bearing: Math.PI, spread: 1.3 },
+  ocean: { bearing: Math.PI, spread: 1.7 },
+  desert: { bearing: 0, spread: 0.8 },
+  mountains: { bearing: 0, spread: 0 },
+  forest: { bearing: 0, spread: 0 },
+  plains: { bearing: 0, spread: 0 },
   taiga: { bearing: 0, spread: 0 },
   mesa: { bearing: 0, spread: 0 },
-  desert: { bearing: 0, spread: 0 },
 };
+
+/** Little islands out at sea, each with a palm or two; the first has the lighthouse. */
+export const ISLANDS: ReadonlyArray<{ at: readonly [number, number]; radius: number }> = [
+  { at: [-26, 26], radius: 3.2 },
+  { at: [24, 30], radius: 2.4 },
+  { at: [36, 6], radius: 2.8 },
+  { at: [-38, 4], radius: 2.2 },
+];
+export const LIGHTHOUSE = { height: 18 } as const;
 
 /** How many blocks deep each pool's water runs. */
 export const LAP_DEPTH = 3;
 export const SPLASH_DEPTH = 2;
 
-/** The deck is laid in a checker of two stones; past its front edge is sand. */
+/** The deck is laid in a checker of two stones, the hotel forecourt in plain stone; all round it is sand. */
 function resortFloor(x: number, z: number): BlockId | null {
   if (inRect(x, z, DECK)) return (Math.floor(x / BLOCK / 2) + Math.floor(z / BLOCK / 2)) % 2 ? BLOCKS.deckDark : BLOCKS.deck;
   if (z > DECK.z2) return BLOCKS.sand;
   if (z < HOTEL.z2 + 1 && z > HOTEL.z1 - 1) return BLOCKS.deck;
-  return null;
+  return BLOCKS.sand;
 }
 
 /** Hollow out a pool: water to `depth` blocks, tiled floor and walls, the deck as its coping. */
@@ -93,22 +105,59 @@ function hotel(world: World) {
   for (const di of [-3, 3]) put(world, mid + di, 1, k2 + 1, BLOCKS.seaLantern);
 }
 
+/** A palm on its own: a trunk with fronds out in a star from the top, drooping at their tips. */
+function palmTree(world: World, i: number, base: number, k: number, tall: number) {
+  for (let level = base; level < base + tall; level += 1) put(world, i, level, k, BLOCKS.palmLog);
+  const top = base + tall;
+  put(world, i, top, k, BLOCKS.palmLeaves);
+  for (const [di, dk] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]] as const) {
+    const reach = di && dk ? 2 : 3;
+    for (let step = 1; step <= reach; step += 1) {
+      const level = step === reach ? top - 1 : top;
+      if (blockAt(world, i + di * step, level, k + dk * step) === BLOCKS.air) put(world, i + di * step, level, k + dk * step, BLOCKS.palmLeaves);
+    }
+  }
+}
+
+/**
+ * An islet: a mound of sand rising out of the sea with a palm on it. The first one carries a
+ * lighthouse instead, striped red and white, with a lantern room at the top.
+ */
+function islet(world: World, { at: [cx, cz], radius }: { at: readonly [number, number]; radius: number }, index: number) {
+  const [ci, ck] = columnAt(cx, cz);
+  const reach = Math.ceil(radius / BLOCK);
+  for (let dk = -reach; dk <= reach; dk += 1) {
+    for (let di = -reach; di <= reach; di += 1) {
+      const d = Math.hypot(di, dk) * BLOCK;
+      if (d > radius) continue;
+      const top = Math.round((1 - d / radius) * 3) - 1;
+      for (let level = world.bottom; level <= top; level += 1) put(world, ci + di, level, ck + dk, level === top ? BLOCKS.sand : BLOCKS.sandstone);
+      world.surface[(ck + dk) * world.width + ci + di] = top;
+    }
+  }
+  if (index > 0) {
+    palmTree(world, ci, 3, ck, 6);
+    return;
+  }
+  // The lighthouse: a two-block-wide tower in red and white bands, a glass lantern room and a cap.
+  for (let level = 3; level < 3 + LIGHTHOUSE.height; level += 1) {
+    const band = Math.floor((level - 3) / 3) % 2 ? BLOCKS.terracotta : BLOCKS.concreteWhite;
+    for (const [di, dk] of [[0, 0], [1, 0], [0, 1], [1, 1]] as const) put(world, ci + di, level, ck + dk, band);
+  }
+  const room = 3 + LIGHTHOUSE.height;
+  for (const [di, dk] of [[0, 0], [1, 0], [0, 1], [1, 1]] as const) {
+    put(world, ci + di, room, ck + dk, BLOCKS.seaLantern);
+    put(world, ci + di, room + 1, ck + dk, BLOCKS.glass);
+    put(world, ci + di, room + 2, ck + dk, BLOCKS.terracotta);
+  }
+}
+
 /** Palms in planters set into the deck: a grass block and a trunk with fronds. */
 function deckPalms(world: World) {
   PALMS.forEach(([x, , z], index) => {
     const [i, k] = columnAt(x, z);
     put(world, i, 0, k, BLOCKS.grass);
-    const tall = 6 + (index % 3);
-    for (let level = 1; level <= tall; level += 1) put(world, i, level, k, BLOCKS.palmLog);
-    const top = tall + 1;
-    put(world, i, top, k, BLOCKS.palmLeaves);
-    for (const [di, dk] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]] as const) {
-      const reach = di && dk ? 2 : 3;
-      for (let step = 1; step <= reach; step += 1) {
-        const level = step === reach ? top - 1 : top;
-        if (blockAt(world, i + di * step, level, k + dk * step) === BLOCKS.air) put(world, i + di * step, level, k + dk * step, BLOCKS.palmLeaves);
-      }
-    }
+    palmTree(world, i, 1, k, 6 + (index % 3));
   });
 }
 
@@ -123,12 +172,14 @@ export const RESORT: Site = {
   flat: FLAT,
   biomes: RESORT_BIOMES,
   floor: resortFloor,
-  trees: { forest: 'palm', plains: 'palm', mountains: 'oak' },
+  trees: { desert: 'palm' },
+  bare: ['desert', 'ocean'],
   build(world) {
     pool(world, LAP_POOL, LAP_DEPTH, laneLines());
     pool(world, SPLASH_POOL, SPLASH_DEPTH);
     hotel(world);
     deckPalms(world);
+    ISLANDS.forEach((island, index) => islet(world, island, index));
   },
 };
 

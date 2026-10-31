@@ -70,10 +70,10 @@ export function placeAnimals(world: World, herds: readonly Herd[] = VILLAGE_HERD
   return found;
 }
 
-/** Turtles amble along the beach; chickens peck round the palm woods behind it. */
+/** Turtles amble along the beach; rabbits hop among the dunes behind the hotel. */
 export const RESORT_HERDS: readonly Herd[] = [
-  { kind: 'turtle', count: 5, biomes: ['ocean', 'forest', 'plains'], ground: [BLOCKS.sand], near: 0.3, far: 10 },
-  { kind: 'chicken', count: 3, biomes: ['forest', 'plains'], ground: [BLOCKS.grass], near: 2, far: 12 },
+  { kind: 'turtle', count: 6, biomes: ['ocean', 'desert'], ground: [BLOCKS.sand], near: 0.3, far: 12 },
+  { kind: 'rabbit', count: 3, biomes: ['desert'], ground: [BLOCKS.sand], near: 2, far: 14 },
 ];
 
 /**

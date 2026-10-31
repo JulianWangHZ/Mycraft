@@ -142,6 +142,8 @@ export interface Site {
   plantable?(x: number, z: number): boolean;
   /** Overrides which tree grows in a biome. */
   trees?: Partial<Record<Biome, TreeKind | null>>;
+  /** Biomes that grow no small plants here, such as a swept beach. */
+  bare?: readonly Biome[];
   /** Structures built after the ground and trees: buildings, pools, docks. */
   build?(world: World): void;
 }
@@ -283,7 +285,7 @@ function grow(world: World, site: Site) {
         continue;
       }
       let roll = hash(i, k, seed + 29);
-      for (const [plant, chance] of growth.plants) {
+      for (const [plant, chance] of site.bare?.includes(biome) ? [] : growth.plants) {
         const fits = plant === BLOCKS.deadBush ? top === BLOCKS.sand || top === BLOCKS.clayOrange : top === BLOCKS.grass;
         if (roll < chance && fits && blockAt(world, i, height + 1, k) === BLOCKS.air) {
           put(world, i, height + 1, k, plant);

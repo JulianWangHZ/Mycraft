@@ -8,7 +8,12 @@ import { Animals } from '../voxel/Animals.js';
 import { BlockSky } from '../voxel/BlockSky.js';
 import { BlockTerrain } from '../voxel/BlockTerrain.js';
 import { BlockSlide } from './BlockSlide.js';
+import { Cube, Post } from '../voxel/parts.js';
 import { DeckTorches, LifeguardTower } from './ResortProps.js';
+import type { Vec3 } from '../../../lib/scenes/types.js';
+import { useFrame } from '@react-three/fiber';
+import { useRef } from 'react';
+import type { Group } from 'three';
 
 type Time = 'day' | 'night';
 
@@ -23,6 +28,37 @@ function PoolGlow() {
     <group>
       {lights.map(([x, z]) => (
         <pointLight key={`${x},${z}`} position={[x, WATER - 0.3, z]} color="#4fd8ff" intensity={8} distance={7} decay={1.5} />
+      ))}
+    </group>
+  );
+}
+
+const SAILS: ReadonlyArray<{ at: Vec3; turn: number; sail: 'woolWhite' | 'woolRed' | 'woolYellow' }> = [
+  { at: [-14, -0.55, 22], turn: 0.6, sail: 'woolWhite' },
+  { at: [12, -0.55, 26], turn: -0.9, sail: 'woolRed' },
+  { at: [30, -0.55, 16], turn: 2.2, sail: 'woolYellow' },
+  { at: [-32, -0.55, 14], turn: -2.4, sail: 'woolWhite' },
+];
+
+/** Little sailing boats riding the swell offshore: a plank hull, a mast and a wool sail. */
+function Sailboats() {
+  const group = useRef<Group>(null);
+  useFrame(({ clock }) => {
+    group.current?.children.forEach((boat, i) => {
+      const t = clock.elapsedTime + i * 1.7;
+      boat.position.y = (SAILS[i]?.at[1] ?? 0) + Math.sin(t * 1.3) * 0.06;
+      boat.rotation.z = Math.sin(t * 0.9) * 0.06;
+    });
+  });
+  return (
+    <group ref={group}>
+      {SAILS.map(({ at, turn, sail }) => (
+        <group key={`${at}`} position={at} rotation={[0, turn, 0]}>
+          <Cube at={[0, 0, 0]} size={[0.9, 0.35, 2.2]} top="planks" side="sprucePlanks" />
+          <Cube at={[0, 0.35, -0.3]} size={[0.5, 0.25, 0.8]} top="planks" side="planks" />
+          <Post at={[0, 0.35, 0.2]} height={2.6} thick={0.1} />
+          <Cube at={[0, 0.8, 0.55]} size={[0.06, 1.9, 0.7]} top={sail} side={sail} />
+        </group>
       ))}
     </group>
   );
@@ -68,6 +104,7 @@ export function ResortGrounds({ time }: { time: Time }) {
       {night ? <PoolGlow /> : null}
       {night ? <HotelWindows /> : null}
       <Animals world={world} herds={RESORT_HERDS} />
+      <Sailboats />
     </group>
   );
 }

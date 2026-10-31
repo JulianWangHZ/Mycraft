@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { pool } from '../pool.js';
 import { CABANA, DECK, LAP_POOL, laneSpot, PALMS, SPLASH_POOL } from '../pool-layout.js';
 import { BLOCKS } from './blocks.js';
-import { HOTEL, LAP_DEPTH, resortWorld, SPLASH_DEPTH } from './resort.js';
+import { HOTEL, ISLANDS, LAP_DEPTH, LIGHTHOUSE, resortWorld, SPLASH_DEPTH } from './resort.js';
 import { blockAt, columnAt, groundAt, topAt } from './world.js';
 
 const world = resortWorld();
@@ -53,7 +53,14 @@ describe('resort world', () => {
     }
   });
 
-  it('grows palms in the woods either side', () => {
+  it('rings the club with sand, sea and islands, with no hills or rock in sight', () => {
+    const found = new Set(world.blocks);
+    for (const id of [BLOCKS.snow, BLOCKS.spruceLog, BLOCKS.oakLog, BLOCKS.clayRed]) expect(found.has(id)).toBe(false);
+    for (const { at } of ISLANDS) expect(at && groundAt(world, at[0], at[1])).toBeGreaterThan(0);
+    expect(topAt(world, ISLANDS[0]?.at[0] ?? 0, ISLANDS[0]?.at[1] ?? 0)).toBeGreaterThan(LIGHTHOUSE.height * 0.5);
+  });
+
+  it('grows palms on the dunes', () => {
     let palms = 0;
     for (let i = 0; i < world.blocks.length; i += 1) if (world.blocks[i] === BLOCKS.palmLeaves) palms += 1;
     expect(palms).toBeGreaterThan(PALMS.length * 15);
