@@ -57,7 +57,11 @@ describe('resort world', () => {
     const found = new Set(world.blocks);
     for (const id of [BLOCKS.snow, BLOCKS.spruceLog, BLOCKS.oakLog, BLOCKS.clayRed]) expect(found.has(id)).toBe(false);
     for (const { at } of ISLANDS) expect(at && groundAt(world, at[0], at[1])).toBeGreaterThan(0);
-    expect(topAt(world, ISLANDS[0]?.at[0] ?? 0, ISLANDS[0]?.at[1] ?? 0)).toBeGreaterThan(LIGHTHOUSE.height * 0.5);
+    const [lx, lz] = ISLANDS[0]?.at ?? [0, 0];
+    expect(topAt(world, lx, lz)).toBeGreaterThan(LIGHTHOUSE.height * 0.5);
+    // The tower stands on solid ground all the way down: no gap of air or water under it.
+    const [i, k] = columnAt(lx, lz);
+    for (let level = world.bottom; level < LIGHTHOUSE.height; level += 1) expect([BLOCKS.air, BLOCKS.water]).not.toContain(blockAt(world, i, level, k));
   });
 
   it('grows palms on the dunes', () => {

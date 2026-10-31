@@ -123,7 +123,7 @@ export function blockFaces(top: Tile, side: Tile = top, bottom: Tile = top, fron
   const hit = faces.get(key);
   if (hit) return hit;
   const make = (tile: Tile) =>
-    new MeshLambertMaterial({ map: tileTexture(tile), ...(glow ? { emissive: '#ffd27a', emissiveMap: tileTexture(tile), emissiveIntensity: 0.9 } : {}) });
+    new MeshLambertMaterial({ map: tileTexture(tile), alphaTest: 0.5, ...(glow ? { emissive: '#ffd27a', emissiveMap: tileTexture(tile), emissiveIntensity: 0.9 } : {}) });
   const made = [make(side), make(side), make(top), make(bottom), make(front), make(side)];
   faces.set(key, made);
   return made;

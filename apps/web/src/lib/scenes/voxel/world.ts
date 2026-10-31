@@ -240,7 +240,11 @@ function palm(world: World, i: number, base: number, k: number, tall: number) {
   const lean = (i + k) % 2 ? 1 : -1;
   let ti = i;
   for (let y = 0; y < tall; y += 1) {
-    if (y === Math.floor(tall / 2)) ti += lean;
+    if (y === Math.floor(tall / 2)) {
+      // Step over to lean, with the trunk doubled up at the step so it stays joined face to face.
+      ti += lean;
+      put(world, ti, base + y - 1, k, BLOCKS.palmLog);
+    }
     put(world, ti, base + y, k, BLOCKS.palmLog);
   }
   const top = base + tall;

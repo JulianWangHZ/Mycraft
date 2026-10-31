@@ -57,7 +57,7 @@ function supports() {
   );
 }
 
-/** Water slide: a cyan block tower with a ladder of steps up the back, a striped roof, and the flume down to the splash pool. */
+/** Water slide: a cyan block tower, open all round, with steps up the back, a striped roof, and the flume down to the splash pool. */
 export function BlockSlide({ night }: { night: boolean }) {
   const [tx, , tz] = SLIDE.tower;
   const top = SLIDE.top;
@@ -76,14 +76,6 @@ export function BlockSlide({ night }: { night: boolean }) {
         <Cube key={`${x},${z}`} at={[x, 0, z]} size={[0.2, top + 1.3, 0.2]} top="concreteCyan" side="concreteCyan" />
       ))}
       <Cube at={[tx, top - 0.14, tz]} size={[1.8, 0.14, 1.8]} top="deck" side="concreteWhite" />
-      {/* Glass rails round the sides and back; the front, where the flume leaves, stays open. */}
-      {[
-        [tx - 0.85, tz, Math.PI / 2],
-        [tx, tz - 0.85, 0],
-        [tx + 0.85, tz, Math.PI / 2],
-      ].map(([x, z, turn]) => (
-        <Cube key={`${x},${z}`} at={[x as number, top, z as number]} size={[1.7, 0.8, 0.05]} top="glass" side="glass" turn={turn as number} />
-      ))}
       {[0, 1, 2].map((step) => (
         <Cube key={step} at={[tx, top + 1.3 + step * 0.16, tz]} size={[2.0 - step * 0.6, 0.16, 2.0 - step * 0.6]} top={step % 2 ? 'woolWhite' : 'woolBlue'} side={step % 2 ? 'woolWhite' : 'woolBlue'} />
       ))}

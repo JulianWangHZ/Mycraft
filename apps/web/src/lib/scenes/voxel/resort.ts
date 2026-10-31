@@ -33,10 +33,10 @@ const RESORT_BIOMES: BiomeLayout = {
 
 /** Little islands out at sea, each with a palm or two; the first has the lighthouse. */
 export const ISLANDS: ReadonlyArray<{ at: readonly [number, number]; radius: number }> = [
-  { at: [-26, 26], radius: 3.2 },
-  { at: [24, 30], radius: 2.4 },
-  { at: [36, 6], radius: 2.8 },
-  { at: [-38, 4], radius: 2.2 },
+  { at: [-26, 26], radius: 4.5 },
+  { at: [24, 30], radius: 3.4 },
+  { at: [36, 6], radius: 3.8 },
+  { at: [-38, 4], radius: 3.2 },
 ];
 export const LIGHTHOUSE = { height: 18 } as const;
 
@@ -130,21 +130,29 @@ function islet(world: World, { at: [cx, cz], radius }: { at: readonly [number, n
     for (let di = -reach; di <= reach; di += 1) {
       const d = Math.hypot(di, dk) * BLOCK;
       if (d > radius) continue;
-      const top = Math.round((1 - d / radius) * 3) - 1;
+      const top = Math.round((1 - d / radius) * 4) - 1;
       for (let level = world.bottom; level <= top; level += 1) put(world, ci + di, level, ck + dk, level === top ? BLOCKS.sand : BLOCKS.sandstone);
       world.surface[(ck + dk) * world.width + ci + di] = top;
     }
   }
+  const crest = world.surface[ck * world.width + ci] as number;
   if (index > 0) {
-    palmTree(world, ci, 3, ck, 6);
+    palmTree(world, ci, crest + 1, ck, 6);
     return;
   }
-  // The lighthouse: a two-block-wide tower in red and white bands, a glass lantern room and a cap.
-  for (let level = 3; level < 3 + LIGHTHOUSE.height; level += 1) {
-    const band = Math.floor((level - 3) / 3) % 2 ? BLOCKS.terracotta : BLOCKS.concreteWhite;
+  // The lighthouse stands on a cobble footing a block wider all round, then rises in red and
+  // white bands of two blocks square to a glass lantern room and a cap.
+  for (let dk = -1; dk <= 2; dk += 1) {
+    for (let di = -1; di <= 2; di += 1) {
+      for (let level = world.bottom; level <= crest + 1; level += 1) put(world, ci + di, level, ck + dk, BLOCKS.cobble);
+    }
+  }
+  const base = crest + 2;
+  for (let level = base; level < base + LIGHTHOUSE.height; level += 1) {
+    const band = Math.floor((level - base) / 3) % 2 ? BLOCKS.terracotta : BLOCKS.concreteWhite;
     for (const [di, dk] of [[0, 0], [1, 0], [0, 1], [1, 1]] as const) put(world, ci + di, level, ck + dk, band);
   }
-  const room = 3 + LIGHTHOUSE.height;
+  const room = base + LIGHTHOUSE.height;
   for (const [di, dk] of [[0, 0], [1, 0], [0, 1], [1, 1]] as const) {
     put(world, ci + di, room, ck + dk, BLOCKS.seaLantern);
     put(world, ci + di, room + 1, ck + dk, BLOCKS.glass);

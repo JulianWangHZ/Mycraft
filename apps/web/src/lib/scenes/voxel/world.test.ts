@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { voxel } from '../voxel.js';
 import { BIOMES } from './biomes.js';
-import { BLOCKS } from './blocks.js';
+import { BLOCKS, isOpaque } from './blocks.js';
+import { resortWorld } from './resort.js';
 import { BLOCK, DOCK, HOUSE_SIZE, HOUSES, SEA_LEVEL, WORLD, workSpot } from './layout.js';
 import { VILLAGE, villageWorld } from './village.js';
 import { blockAt, buildWorld, columnAt, columnsIn, columnX, columnZ, groundAt, topAt } from './world.js';
@@ -112,5 +113,22 @@ describe('village world', () => {
     expect(blockAt(world, -1, 0, 0)).toBe(BLOCKS.air);
     expect(blockAt(world, 0, WORLD.top, 0)).toBe(BLOCKS.air);
     expect(blockAt(world, 0, WORLD.bottom - 1, 0)).toBe(BLOCKS.air);
+  });
+
+  it('never leaves a trunk hanging in the air, in any scene', () => {
+    const trunks = new Set<number>([BLOCKS.oakLog, BLOCKS.spruceLog, BLOCKS.palmLog, BLOCKS.cactus]);
+    for (const w of [world, resortWorld()]) {
+      for (let level = w.bottom + 1; level < w.top; level += 1) {
+        for (let k = 0; k < w.depth; k += 1) {
+          for (let i = 0; i < w.width; i += 1) {
+            if (!trunks.has(blockAt(w, i, level, k))) continue;
+            // Held up from below, or joined face to face with the trunk beside it where a palm leans.
+            const below = blockAt(w, i, level - 1, k);
+            const beside = [blockAt(w, i + 1, level, k), blockAt(w, i - 1, level, k)].some((id) => trunks.has(id));
+            expect(isOpaque(below) || trunks.has(below) || beside).toBe(true);
+          }
+        }
+      }
+    }
   });
 });
