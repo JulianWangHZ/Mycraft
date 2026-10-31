@@ -13,7 +13,8 @@ import { ActivityProps } from './ActivityProps.js';
 import { Backdrop, SKIES } from './Backdrops.js';
 import { CameraRig } from './CameraRig.js';
 import { Character } from './Character.js';
-import { Booth, Desk } from './Desk.js';
+import { Desk } from './Desk.js';
+import { BlockBooth } from './park/FairProps.js';
 import { Environment } from './Environments.js';
 import { FitToWindow } from './FitToWindow.js';
 import { useIslandStore } from './island-store.js';
@@ -103,7 +104,7 @@ function Workstations(props: Omit<SceneProps, 'manifest' | 'reducedMotion' | 'ht
     <>
       {sessions.map((session) => {
         const seat = seats.get(session.sessionId);
-        return seat ? <Booth key={session.sessionId} spot={deskSpot(scene, session, seat)} /> : null;
+        return seat ? <BlockBooth key={session.sessionId} spot={deskSpot(scene, session, seat)} /> : null;
       })}
     </>
   );

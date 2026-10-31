@@ -1,6 +1,8 @@
 import { QUEUE_LANES, queueEntrance, RIDES, STATION } from './park-layout.js';
 import { RIDE_SEATS } from './rides.js';
 import type { SceneDefinition, Vec3 } from './types.js';
+import { fairgroundWorld } from './blocks/fairground.js';
+import { topAt } from './blocks/world.js';
 
 export const CAROUSEL_AT: Vec3 = [5.2, 0, 4.6];
 
@@ -48,6 +50,10 @@ export const park: SceneDefinition = {
   naps: false,
   characterScale: 1,
   nameTags: false,
+  figure: 'blocky',
+  terrainAt: (x, z) => topAt(fairgroundWorld(), x, z),
+  fog: [56, 125],
+  maxDistance: 50,
   cameraTarget: [1.5, 3, -2],
   closeOffset: [4.5, 5.5, 6],
   cameraOffset: [24, 14, 33],

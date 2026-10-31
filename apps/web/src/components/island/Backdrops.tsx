@@ -1,32 +1,15 @@
 import { useMemo, type ReactNode } from 'react';
-import { buildBackdropTowers, buildSkyline, seeded } from '../../lib/scenes/skyline.js';
+import { buildBackdropTowers, seeded } from '../../lib/scenes/skyline.js';
 import type { SceneId } from '../../lib/scenes/types.js';
 import { LEVEL } from '../../lib/scenes/street.js';
 import { ParkingLot } from './city/ParkingLot.js';
 import { Street } from './city/Street.js';
+import { FairSky } from './park/FairGrounds.js';
 import { ResortSky } from './pool/ResortGrounds.js';
 import { VillageSky } from './blocks/VillageGrounds.js';
 import { facade, nightFacade } from './textures.js';
 
-const STREET = -60;
 const FLOOR_UNIT = 1.6;
-
-function Building({ x, z, width, depth, top, tint }: { x: number; z: number; width: number; depth: number; top: number; tint: string }) {
-  const height = top - STREET;
-  const map = useMemo(() => facade(Math.max(1, Math.round(width / 2)), Math.max(1, Math.round(height / FLOOR_UNIT / 8))), [width, height]);
-  return (
-    <group position={[x, STREET + height / 2, z]}>
-      <mesh>
-        <boxGeometry args={[width, height, depth]} />
-        <meshStandardMaterial color={tint} map={map} roughness={0.8} />
-      </mesh>
-      <mesh position={[0, height / 2 + 0.3, 0]}>
-        <boxGeometry args={[width * 0.6, 0.6, depth * 0.6]} />
-        <meshStandardMaterial color="#9aa6c8" />
-      </mesh>
-    </group>
-  );
-}
 
 function Clouds({ seed, height, spread }: { seed: number; height: number; spread: number }) {
   const clouds = useMemo(() => {
@@ -88,43 +71,12 @@ function City({ time }: { time: Time }) {
 }
 
 /** Rolling hills and a far-off town round the park; the hills fall dark and the clouds clear at night. */
-function Countryside({ time }: { time: Time }) {
-  const night = time === 'night';
-  const hills = useMemo(() => {
-    const random = seeded(21);
-    return Array.from({ length: 16 }, (_, i) => {
-      const angle = (i / 16) * Math.PI * 2;
-      const distance = 30 + random() * 20;
-      return { at: [Math.cos(angle) * distance, -3, Math.sin(angle) * distance] as [number, number, number], size: 8 + random() * 10 };
-    });
-  }, []);
-  const city = useMemo(() => buildSkyline(30, 3).map((t) => ({ ...t, x: t.x * 1.8, z: t.z * 1.8 - 40, top: t.top - 40 })), []);
-  return (
-    <>
-      <mesh position={[0, -0.3, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[220, 48]} />
-        <meshStandardMaterial color={night ? '#2f4a40' : '#a8d99a'} />
-      </mesh>
-      {hills.map(({ at, size }, index) => (
-        <mesh key={index} position={at} scale={[size, size * 0.5, size]}>
-          <sphereGeometry args={[1, 16, 10]} />
-          <meshStandardMaterial color={night ? (index % 2 ? '#34503f' : '#3a5846') : index % 2 ? '#8fcf8a' : '#9ad69a'} roughness={1} flatShading />
-        </mesh>
-      ))}
-      {city.map((tower, index) => (
-        <Building key={index} {...tower} />
-      ))}
-      {night ? null : <Clouds seed={8} height={18} spread={180} />}
-    </>
-  );
-}
-
-const BACKDROPS: Record<SceneId, (props: { time: Time }) => ReactNode> = { office: City, park: Countryside, pool: ResortSky, village: VillageSky };
+const BACKDROPS: Record<SceneId, (props: { time: Time }) => ReactNode> = { office: City, park: FairSky, pool: ResortSky, village: VillageSky };
 
 /** Sky gradient (top, horizon) for each scene at each time of day. */
 export const SKIES: Record<SceneId, Record<Time, [string, string]>> = {
   office: { day: ['#6fb1ec', '#e4eefb'], night: ['#120d2b', '#4a3470'] },
-  park: { day: ['#9ccdf2', '#fdeedd'], night: ['#0f1530', '#3b3a6b'] },
+  park: { day: ['#74a6ff', '#cfe2fc'], night: ['#0c0f2a', '#33305e'] },
   pool: { day: ['#6fa8ff', '#cfe6fc'], night: ['#0a0d24', '#2a2f5c'] },
   village: { day: ['#79a8ff', '#c9defc'], night: ['#0a0d24', '#2a2f5c'] },
 };

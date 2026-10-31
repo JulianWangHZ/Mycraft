@@ -70,6 +70,14 @@ export function placeAnimals(world: World, herds: readonly Herd[] = VILLAGE_HERD
   return found;
 }
 
+/** Farm animals in the fields in front of the park, wolves in the woods to one side. */
+export const FAIR_HERDS: readonly Herd[] = [
+  { kind: 'sheep', count: 4, biomes: ['plains', 'forest'], ground: [BLOCKS.grass], near: 2, far: 12 },
+  { kind: 'cow', count: 3, biomes: ['plains', 'forest'], ground: [BLOCKS.grass], near: 2, far: 12 },
+  { kind: 'pig', count: 2, biomes: ['plains'], ground: [BLOCKS.grass], near: 2, far: 12 },
+  { kind: 'wolf', count: 3, biomes: ['forest', 'taiga'], ground: [BLOCKS.grass, BLOCKS.snow], near: 3, far: 16 },
+];
+
 /** Turtles amble along the beach; rabbits hop among the dunes behind the hotel. */
 export const RESORT_HERDS: readonly Herd[] = [
   { kind: 'turtle', count: 6, biomes: ['ocean', 'desert'], ground: [BLOCKS.sand], near: 0.3, far: 12 },

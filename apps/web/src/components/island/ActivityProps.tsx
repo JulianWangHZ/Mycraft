@@ -8,7 +8,8 @@ import { CoffeeBar as Cafe } from './furniture/CoffeeBar.js';
 import { PoolTable } from './furniture/PoolTable.js';
 import { VILLAGE_PROPS } from './blocks/VillageProps.js';
 import { BlockPingPong, Cabana, DjBooth, GrillStation, HotTub, LoungerPair, LoungerRow, TikiBar } from './pool/ResortProps.js';
-import { Bandstand, Carousel as ParkCarousel, FoodStand as ParkFoodStand, GameStall, IceCreamCart, Picnic } from './park/Stalls.js';
+import { BlockCarousel } from './park/BlockRides.js';
+import { BlockBandstand, BlockFoodStand, BlockGameStall, BlockIceCream, BlockPicnic } from './park/FairProps.js';
 
 type V3 = Vec3;
 
@@ -168,16 +169,16 @@ const BY_SCENE: Record<SceneId, Record<Activity, Props>> = {
   office: { ...OFFICE, coffee: Cafe, pingpong: PoolTable, gym: () => null, nap: DozeCorner },
   park: {
     ...OFFICE,
-    coffee: IceCreamCart,
-    kitchen: ParkFoodStand,
-    ktv: Bandstand,
-    gym: ParkCarousel,
+    coffee: BlockIceCream,
+    kitchen: BlockFoodStand,
+    ktv: BlockBandstand,
+    gym: BlockCarousel,
     // The coaster, ferris wheel and drop tower are part of the grounds; their gathering spots need no prop.
     ballpit: () => null,
     massage: () => null,
     sofa: () => null,
-    pingpong: GameStall,
-    nap: Picnic,
+    pingpong: BlockGameStall,
+    nap: BlockPicnic,
   },
   pool: {
     ...OFFICE,

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { SceneDefinition, SceneId } from '../../lib/scenes/types.js';
 import { OfficeDecor } from './office/OfficeDecor.js';
 import { OfficeShell } from './office/OfficeShell.js';
-import { ParkGrounds } from './park/ParkGrounds.js';
+import { FairGrounds } from './park/FairGrounds.js';
 import { ResortGrounds } from './pool/ResortGrounds.js';
 import { VillageGrounds } from './blocks/VillageGrounds.js';
 
@@ -24,7 +24,7 @@ function OfficeTower({ time }: EnvironmentProps) {
 
 const ENVIRONMENTS: Record<SceneId, (props: EnvironmentProps) => ReactNode> = {
   office: OfficeTower,
-  park: ParkGrounds,
+  park: FairGrounds,
   pool: ResortGrounds,
   village: VillageGrounds,
 };
