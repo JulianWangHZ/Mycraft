@@ -6,10 +6,10 @@ import { blockAt, columnAt, columnX, columnZ, type World } from './world.js';
 
 import type { Biome } from './biomes.js';
 
-export const ANIMAL_KINDS = ['sheep', 'cow', 'pig', 'chicken', 'wolf', 'rabbit'] as const;
+export const ANIMAL_KINDS = ['sheep', 'cow', 'pig', 'chicken', 'wolf', 'rabbit', 'turtle'] as const;
 export type AnimalKind = (typeof ANIMAL_KINDS)[number];
 
-interface Herd {
+export interface Herd {
   kind: AnimalKind;
   count: number;
   /** Biomes it lives in, and the ground it will stand on. */
@@ -21,7 +21,7 @@ interface Herd {
 }
 
 /** Farm animals graze just outside the village; wolves keep to the woods; rabbits to open ground. */
-const HERDS: readonly Herd[] = [
+export const VILLAGE_HERDS: readonly Herd[] = [
   { kind: 'sheep', count: 5, biomes: ['plains', 'forest', 'mountains', 'ocean'], ground: [BLOCKS.grass], near: 1.5, far: 9 },
   { kind: 'cow', count: 4, biomes: ['plains', 'forest', 'mountains', 'ocean'], ground: [BLOCKS.grass], near: 1.5, far: 9 },
   { kind: 'pig', count: 3, biomes: ['plains', 'forest', 'ocean'], ground: [BLOCKS.grass], near: 1.5, far: 9 },
@@ -51,9 +51,9 @@ function grazing(world: World, i: number, k: number, ground: readonly number[]):
 }
 
 /** Every herd round the village, the same for every load of the same world. */
-export function placeAnimals(world: World, seed = 7): Animal[] {
+export function placeAnimals(world: World, herds: readonly Herd[] = VILLAGE_HERDS, seed = 7): Animal[] {
   const found: Animal[] = [];
-  HERDS.forEach((herd, h) => {
+  herds.forEach((herd, h) => {
     let placed = 0;
     for (let attempt = 0; attempt < 6000 && placed < herd.count; attempt += 1) {
       const [i, k] = columnAt((hash(attempt, h * 2 + 1, seed + 51) * 2 - 1) * SEARCH, (hash(attempt, h * 2 + 2, seed + 51) * 2 - 1) * SEARCH);
@@ -69,6 +69,12 @@ export function placeAnimals(world: World, seed = 7): Animal[] {
   });
   return found;
 }
+
+/** Turtles amble along the beach; chickens peck round the palm woods behind it. */
+export const RESORT_HERDS: readonly Herd[] = [
+  { kind: 'turtle', count: 5, biomes: ['ocean', 'forest', 'plains'], ground: [BLOCKS.sand], near: 0.3, far: 10 },
+  { kind: 'chicken', count: 3, biomes: ['forest', 'plains'], ground: [BLOCKS.grass], near: 2, far: 12 },
+];
 
 /**
  * Where an animal is heading at a moment: it picks a fresh spot near home every few seconds,

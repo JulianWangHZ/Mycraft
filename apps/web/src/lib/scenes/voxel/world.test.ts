@@ -3,9 +3,10 @@ import { voxel } from '../voxel.js';
 import { BIOMES } from './biomes.js';
 import { BLOCKS } from './blocks.js';
 import { BLOCK, DOCK, HOUSE_SIZE, HOUSES, SEA_LEVEL, WORLD, workSpot } from './layout.js';
-import { blockAt, columnAt, columnX, columnZ, generateWorld, groundAt, topAt } from './world.js';
+import { VILLAGE, villageWorld } from './village.js';
+import { blockAt, buildWorld, columnAt, columnsIn, columnX, columnZ, groundAt, topAt } from './world.js';
 
-const world = generateWorld();
+const world = villageWorld();
 
 function column(x: number, z: number): [number, number] {
   return [Math.floor(x / BLOCK + WORLD.width / 2), Math.floor(z / BLOCK + WORLD.depth / 2)];
@@ -16,10 +17,19 @@ function surfaceAt(x: number, z: number): number {
   return world.surface[k * world.width + i] as number;
 }
 
-describe('generateWorld', () => {
-  it('is built once per seed and reused', () => {
-    expect(generateWorld()).toBe(world);
-    expect(generateWorld(8)).not.toBe(world);
+describe('village world', () => {
+  it('is built once per site and reused', () => {
+    expect(villageWorld()).toBe(world);
+    expect(buildWorld({ ...VILLAGE, key: 'village-again', seed: 8 })).not.toBe(world);
+  });
+
+  it('lists the columns inside a rectangle', () => {
+    const columns = columnsIn({ x1: 0, x2: 1, z1: 0, z2: 0.5 });
+    expect(columns).toHaveLength(2);
+    for (const [i, k] of columns) {
+      expect(columnX(i)).toBeGreaterThan(0);
+      expect(columnZ(k)).toBeGreaterThan(0);
+    }
   });
 
   it('maps columns back to scene units', () => {

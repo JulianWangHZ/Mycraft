@@ -35,8 +35,9 @@ describe('biomes', () => {
   });
 
   it('keeps the village flat', () => {
-    expect(groundHeight(0, 0, 7)).toBe(0);
-    expect(groundHeight(-8, -9, 7)).toBe(0);
+    expect(groundHeight(0, 0, 7, 0)).toBe(0);
+    expect(groundHeight(30, -30, 7, 0)).toBe(0);
+    expect(groundHeight(0, -28, 7, 20)).toBeGreaterThan(4);
   });
 
   it('gives every biome a height', () => {

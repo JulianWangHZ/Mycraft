@@ -1,26 +1,28 @@
-import { flatDistance } from './layout.js';
 import { fbm, ridged, smoothstep } from './noise.js';
 
 export const BIOMES = ['mountains', 'mesa', 'desert', 'ocean', 'plains', 'forest', 'taiga'] as const;
 export type Biome = (typeof BIOMES)[number];
 
 /**
- * Each biome owns a direction round the village, as a compass angle: 0 is straight back, a
- * quarter turn is to the right. The camera looks in from the front right, so the tall biomes sit
- * behind the village and the low ones in front, where they cannot hide it.
+ * Where each biome lies round a scene: its direction as a compass angle (0 is straight back, a
+ * quarter turn is to the right) and how wide it spreads, in radians. Neighbours blend across the
+ * overlap. A biome with no spread does not appear.
  */
-const BEARING: Readonly<Record<Biome, number>> = {
-  mountains: 0,
-  mesa: 0.95,
-  desert: 2.05,
-  ocean: Math.PI,
-  plains: -2.3,
-  forest: -1.65,
-  taiga: -0.8,
-};
+export type BiomeLayout = Readonly<Record<Biome, { bearing: number; spread: number }>>;
 
-/** How wide each biome spreads, in radians; neighbours blend across the overlap. The sea gets the whole front. */
-const SPREAD: Readonly<Record<Biome, number>> = { mountains: 0.55, mesa: 0.45, desert: 0.45, ocean: 1.0, plains: 0.45, forest: 0.5, taiga: 0.5 };
+/**
+ * Round the village. The camera looks in from the front right, so the tall biomes sit behind the
+ * village and the low ones in front, where they cannot hide it. The sea gets the whole front.
+ */
+export const VILLAGE_BIOMES: BiomeLayout = {
+  mountains: { bearing: 0, spread: 0.55 },
+  mesa: { bearing: 0.95, spread: 0.45 },
+  desert: { bearing: 2.05, spread: 0.45 },
+  ocean: { bearing: Math.PI, spread: 1.0 },
+  plains: { bearing: -2.3, spread: 0.45 },
+  forest: { bearing: -1.65, spread: 0.5 },
+  taiga: { bearing: -0.8, spread: 0.5 },
+};
 /** How far the ground takes to climb from the flat village up to the wild heights. */
 const RAMP = 6;
 
@@ -30,9 +32,9 @@ function turn(a: number, b: number): number {
 }
 
 /** Biome blend at a point: weights that sum to 1, wobbled by noise so borders wander. */
-export function biomeWeights(x: number, z: number, seed: number): Record<Biome, number> {
+export function biomeWeights(x: number, z: number, seed: number, layout: BiomeLayout = VILLAGE_BIOMES): Record<Biome, number> {
   const bearing = Math.atan2(x, -z) + (fbm(x / 22, z / 22, seed + 7, 2) - 0.5) * 1.4;
-  const raw = BIOMES.map((b) => Math.exp(-((turn(bearing, BEARING[b]) / SPREAD[b]) ** 2)));
+  const raw = BIOMES.map((b) => (layout[b].spread > 0 ? Math.exp(-((turn(bearing, layout[b].bearing) / layout[b].spread) ** 2)) : 0));
   const total = raw.reduce((sum, w) => sum + w, 0);
   return Object.fromEntries(BIOMES.map((b, i) => [b, (raw[i] as number) / total])) as Record<Biome, number>;
 }
@@ -73,10 +75,13 @@ export function biomeHeight(biome: Biome, x: number, z: number, seed: number): n
   }
 }
 
-/** Ground height in blocks at a point: 0 on the village flats, then the blended biomes beyond. */
-export function groundHeight(x: number, z: number, seed: number): number {
-  const weights = biomeWeights(x, z, seed);
+/**
+ * Ground height in blocks at a point, `away` from the scene's flat ground: 0 on the flats, then
+ * the blended biomes beyond.
+ */
+export function groundHeight(x: number, z: number, seed: number, away: number, layout: BiomeLayout = VILLAGE_BIOMES): number {
+  const weights = biomeWeights(x, z, seed, layout);
   const wild = BIOMES.reduce((sum, b) => sum + (weights[b] > 0.01 ? weights[b] * biomeHeight(b, x, z, seed) : 0), 0);
   // `|| 0` turns the -0 a sunken biome rounds to on the flats into a plain 0.
-  return Math.round(wild * smoothstep(0, RAMP, flatDistance(x, z))) || 0;
+  return Math.round(wild * smoothstep(0, RAMP, away)) || 0;
 }

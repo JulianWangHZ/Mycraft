@@ -7,7 +7,7 @@ import { BallPit } from './furniture/BallPit.js';
 import { CoffeeBar as Cafe } from './furniture/CoffeeBar.js';
 import { PoolTable } from './furniture/PoolTable.js';
 import { VILLAGE_PROPS } from './voxel/VillageProps.js';
-import { Cabana, DjBooth, GrillStation, HotTub, LoungerPair, LoungerRow, TikiBar } from './pool/Poolside.js';
+import { BlockPingPong, Cabana, DjBooth, GrillStation, HotTub, LoungerPair, LoungerRow, TikiBar } from './pool/ResortProps.js';
 import { Bandstand, Carousel as ParkCarousel, FoodStand as ParkFoodStand, GameStall, IceCreamCart, Picnic } from './park/Stalls.js';
 
 type V3 = Vec3;
@@ -188,6 +188,7 @@ const BY_SCENE: Record<SceneId, Record<Activity, Props>> = {
     gym: () => null,
     massage: Cabana,
     ballpit: HotTub,
+    pingpong: BlockPingPong,
     sofa: LoungerRow,
     nap: LoungerPair,
   },

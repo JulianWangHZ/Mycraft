@@ -252,6 +252,27 @@ const PAINTERS: Readonly<Record<Tile, Painter>> = {
   doorTop: door(true),
   doorBottom: door(false),
   sprucePlanks: boards('#6e5034', 73),
+  // Palm bark in rough rings, rather than the long grain of oak.
+  palmLog: (x, y) => shade(rgb('#8a6a46'), (y % 4 === 0 ? 0.72 : 0.92) + hash(x, y, 74) * 0.14),
+  palmLogTop: rings('#b39469', '#7a5c3a', 75),
+  palmLeaves: foliage('#5aa83a', 76),
+  // Pale stone deck slabs with a fine bevel round each one.
+  deck: (x, y) => shade(rgb('#efe3c8'), (x === 0 || y === 0 ? 1.06 : x === 15 || y === 15 ? 0.84 : 1) * (0.95 + hash(x, y, 77) * 0.07)),
+  deckDark: (x, y) => shade(rgb('#d9c7a2'), (x === 0 || y === 0 ? 1.06 : x === 15 || y === 15 ? 0.84 : 1) * (0.95 + hash(x, y, 78) * 0.07)),
+  // Small glazed pool tiles, four by four, with pale grout.
+  poolTile: (x, y) => (x % 4 === 3 || y % 4 === 3 ? rgb('#d8eef2') : shade(rgb('#4fb8d6'), 0.9 + hash(Math.floor(x / 4), Math.floor(y / 4), 79) * 0.2)),
+  poolLine: (x, y) => (x % 4 === 3 || y % 4 === 3 ? rgb('#c9dde3') : shade(rgb('#1f4f9a'), 0.92 + hash(x, y, 80) * 0.1)),
+  concreteWhite: speckle('#e9ecec', 81, 0.05),
+  quartzPillar: (x, y) => shade(rgb('#efece6'), (x === 2 || x === 13 ? 0.86 : 1) * (0.97 + hash(x, y, 82) * 0.04)),
+  quartzTop: (x, y) => shade(rgb('#efece6'), (x === 0 || y === 0 || x === 15 || y === 15 ? 0.88 : 1) * (0.97 + hash(x, y, 83) * 0.04)),
+  terracotta: (x, y) => shade(rgb('#b8623a'), (y % 8 === 7 ? 0.78 : 1) * (0.93 + hash(x, Math.floor(y / 8), 84) * 0.1)),
+  // A glowing block: pale aqua panes in a frame.
+  seaLantern: (x, y) => (x === 0 || y === 0 || x === 15 || y === 15 || x === 7 || y === 7 ? rgb('#9fd8d0') : shade(rgb('#e6fbf6'), 0.94 + hash(x, y, 85) * 0.06)),
+  concreteOrange: speckle('#e4782a', 86, 0.05),
+  concreteYellow: speckle('#f2c43a', 87, 0.05),
+  concreteCyan: speckle('#2aa6b8', 88, 0.05),
+  woolBlue: speckle('#3a5fc2', 89, 0.12),
+  woolYellow: speckle('#f2cf3c', 90, 0.12),
   craftingTop: (x, y) => (x === 0 || y === 0 || x === 15 || y === 15 ? rgb('#6b4a2a') : x % 5 === 2 || y % 5 === 2 ? rgb('#8d6a3e') : shade(rgb('#c09359'), 0.92 + hash(x, y, 51) * 0.12)),
   craftingSide: (x, y) => (y < 3 ? shade(rgb('#a77a47'), 0.9) : (x === 3 || x === 12) && y > 5 && y < 13 ? rgb('#7d7d82') : boards('#b88c56', 52)(x, y)),
   furnaceFront: (x, y) => (x > 3 && x < 12 && y > 8 && y < 14 ? (y > 11 ? rgb('#ff9a3c') : rgb('#2b2522')) : stones('#8a8a8e', '#4b4b50', 53)(x, y)),

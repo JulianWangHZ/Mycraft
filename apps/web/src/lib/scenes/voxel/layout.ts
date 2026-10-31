@@ -93,15 +93,20 @@ export function inRect(x: number, z: number, r: Rect, margin = 0): boolean {
   return x >= r.x1 - margin && x <= r.x2 + margin && z >= r.z1 - margin && z <= r.z2 + margin;
 }
 
-/** Distance from a point to the nearest flat ground; 0 inside it. */
-export function flatDistance(x: number, z: number): number {
+/** Distance from a point to the nearest of some rectangles; 0 inside one. */
+export function rectDistance(rects: readonly Rect[], x: number, z: number): number {
   let best = Number.POSITIVE_INFINITY;
-  for (const r of FLAT) {
+  for (const r of rects) {
     const dx = Math.max(r.x1 - x, 0, x - r.x2);
     const dz = Math.max(r.z1 - z, 0, z - r.z2);
     best = Math.min(best, Math.hypot(dx, dz));
   }
   return best;
+}
+
+/** Distance from a point to the village's flat ground; 0 inside it. */
+export function flatDistance(x: number, z: number): number {
+  return rectDistance(FLAT, x, z);
 }
 
 /** Distance from a point to a path segment on the ground. */

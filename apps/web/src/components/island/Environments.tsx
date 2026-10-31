@@ -3,8 +3,8 @@ import type { SceneDefinition, SceneId } from '../../lib/scenes/types.js';
 import { OfficeDecor } from './office/OfficeDecor.js';
 import { OfficeShell } from './office/OfficeShell.js';
 import { ParkGrounds } from './park/ParkGrounds.js';
-import { PoolGrounds } from './pool/PoolGrounds.js';
-import { VoxelGrounds } from './voxel/VoxelGrounds.js';
+import { ResortGrounds } from './pool/ResortGrounds.js';
+import { VillageGrounds } from './voxel/VillageGrounds.js';
 
 interface EnvironmentProps {
   scene: SceneDefinition;
@@ -25,8 +25,8 @@ function OfficeTower({ time }: EnvironmentProps) {
 const ENVIRONMENTS: Record<SceneId, (props: EnvironmentProps) => ReactNode> = {
   office: OfficeTower,
   park: ParkGrounds,
-  pool: PoolGrounds,
-  voxel: VoxelGrounds,
+  pool: ResortGrounds,
+  voxel: VillageGrounds,
 };
 
 export function Environment(props: EnvironmentProps) {

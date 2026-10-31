@@ -107,7 +107,7 @@ function place(world: World, i: number, level: number, k: number, [x, y, z]: V3,
 const NO_SHADE = [1, 1, 1, 1];
 const WHITE: V3 = [1, 1, 1];
 /** Tiles coloured by the biome they grow in. */
-const TINTED: ReadonlySet<Tile> = new Set(['grassTop', 'tallGrass', 'oakLeaves']);
+const TINTED: ReadonlySet<Tile> = new Set(['grassTop', 'tallGrass', 'oakLeaves', 'palmLeaves']);
 
 function tintAt(world: World, i: number, k: number, tile: Tile): V3 {
   if (!TINTED.has(tile)) return WHITE;

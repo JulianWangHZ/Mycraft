@@ -1,13 +1,12 @@
 import { hash } from '../../textures/relief.js';
-import { BIOMES, biomeWeights, dominant, groundHeight, type Biome } from './biomes.js';
+import { BIOMES, biomeWeights, dominant, groundHeight, VILLAGE_BIOMES, type Biome, type BiomeLayout } from './biomes.js';
 import { BLOCKS, type BlockId } from './blocks.js';
-import { BLOCK, CAMPFIRE, DOCK, FARM, flatDistance, HOUSE_SIZE, HOUSES, houseRect, inRect, LAMPS, PATH_WIDTH, PATHS, SEA_LEVEL, segmentDistance, WELL, WORKSHOP_FLOOR, WORKSHOP_YARD, WORLD } from './layout.js';
+import { BLOCK, rectDistance, SEA_LEVEL, WORLD, type Rect } from './layout.js';
 import { fbm } from './noise.js';
-import { voxel } from '../voxel.js';
 
 /**
  * A block world: a box of block ids, one byte each. Level `l` is the block whose top face is at
- * height `l * BLOCK`, so the village ground, level 0, is flush with the scene floor.
+ * height `l * BLOCK`, so a scene's flat ground, level 0, is flush with the scene floor.
  */
 export interface World {
   width: number;
@@ -75,7 +74,7 @@ export function blockAt(world: World, i: number, level: number, k: number): numb
   return world.blocks[indexOf(world, i, level, k)] as number;
 }
 
-function put(world: World, i: number, level: number, k: number, id: BlockId) {
+export function put(world: World, i: number, level: number, k: number, id: BlockId) {
   if (i < 0 || k < 0 || i >= world.width || k >= world.depth || level < world.bottom || level >= world.top) return;
   world.blocks[indexOf(world, i, level, k)] = id;
 }
@@ -96,7 +95,7 @@ const SNOW_LINE = 17;
 
 /** What a column is built from: its top block, the few under it, and what is deep below. */
 function layers(biome: Biome, height: number, x: number, z: number, seed: number, flat: boolean): { top: BlockId; under: BlockId; depth: number } {
-  // The village is lawn right down to the shore; sand starts where the ground falls away.
+  // Flat ground is lawn right down to the shore; sand starts where the ground falls away.
   const beach = !flat && height <= SEA_LEVEL + 1 && height >= SEA_LEVEL - 3;
   if (biome === 'desert') return { top: BLOCKS.sand, under: BLOCKS.sandstone, depth: 4 };
   if (biome === 'mesa') return { top: BLOCKS.clayOrange, under: BLOCKS.clayOrange, depth: 0 };
@@ -106,24 +105,6 @@ function layers(biome: Biome, height: number, x: number, z: number, seed: number
   if ((biome === 'mountains' || biome === 'taiga') && height >= snowLine) return { top: BLOCKS.snow, under: BLOCKS.stone, depth: 1 };
   if (biome === 'mountains' && height > 9) return { top: BLOCKS.stone, under: BLOCKS.stone, depth: 0 };
   return { top: BLOCKS.grass, under: BLOCKS.dirt, depth: 3 };
-}
-
-/** The village floor: paths, the cobbled square round the well, the workshop decking and the farm. */
-function villageTop(x: number, z: number): BlockId | null {
-  if (Math.hypot(x - WELL.at[0], z - WELL.at[2]) < 1.5) return hash(Math.round(x * 2), Math.round(z * 2), 3) < 0.3 ? BLOCKS.mossyCobble : BLOCKS.cobble;
-  if (Math.hypot(x - CAMPFIRE.at[0], z - CAMPFIRE.at[2]) < 1.2) return BLOCKS.gravel;
-  if (inRect(x, z, WORKSHOP_FLOOR)) return BLOCKS.planks;
-  if (inRect(x, z, FARM)) return BLOCKS.farmland;
-  if (PATHS.some((path) => segmentDistance(x, z, path) < PATH_WIDTH / 2)) return BLOCKS.path;
-  return null;
-}
-
-/** Space round every prop and workbench that must stay free of plants. */
-const KEEP_CLEAR = 1.9;
-
-function villageClear(x: number, z: number): boolean {
-  if (villageTop(x, z) !== null || inRect(x, z, WORKSHOP_YARD) || HOUSES.some((h) => inRect(x, z, houseRect(h), 0.5))) return false;
-  return Object.values(voxel.activities).every(([ax, , az]) => Math.hypot(x - ax, z - az) > KEEP_CLEAR) && !LAMPS.some(([lx, , lz]) => Math.hypot(x - lx, z - lz) < 0.6);
 }
 
 /** Deep rock: mostly stone, with veins of andesite and the odd ore, richer the deeper it goes. */
@@ -141,16 +122,43 @@ function blendTint(world: World, column: number, weights: Record<Biome, number> 
   }
 }
 
-function fillColumns(world: World, seed: number) {
+/** Trees a scene grows, by biome; null leaves the biome bare. */
+export type TreeKind = 'oak' | 'spruce' | 'palm' | 'cactus';
+
+/**
+ * Everything that makes one scene's world its own: where its flat ground is, which biomes lie
+ * round it, what its floor is paved with and what it builds on top.
+ */
+export interface Site {
+  /** Cache key; one world is built per site. */
+  key: string;
+  seed: number;
+  /** Ground kept flat at level 0, in scene units. */
+  flat: readonly Rect[];
+  biomes?: BiomeLayout;
+  /** Top block for a column of flat ground, or null to keep the biome's own. */
+  floor?(x: number, z: number): BlockId | null;
+  /** Whether the odd tuft of grass may grow on flat ground here. */
+  plantable?(x: number, z: number): boolean;
+  /** Overrides which tree grows in a biome. */
+  trees?: Partial<Record<Biome, TreeKind | null>>;
+  /** Structures built after the ground and trees: buildings, pools, docks. */
+  build?(world: World): void;
+}
+
+function fillColumns(world: World, site: Site) {
+  const { seed } = site;
+  const layout = site.biomes ?? VILLAGE_BIOMES;
   for (let k = 0; k < world.depth; k += 1) {
     for (let i = 0; i < world.width; i += 1) {
       const x = columnX(i);
       const z = columnZ(k);
-      const flat = flatDistance(x, z) === 0;
-      const weights = flat ? null : biomeWeights(x, z, seed);
+      const away = rectDistance(site.flat, x, z);
+      const flat = away === 0;
+      const weights = flat ? null : biomeWeights(x, z, seed, layout);
       const biome = weights ? dominant(weights) : 'plains';
       blendTint(world, k * world.width + i, weights);
-      const height = Math.min(world.top - 12, Math.max(world.bottom + 2, groundHeight(x, z, seed)));
+      const height = Math.min(world.top - 12, Math.max(world.bottom + 2, groundHeight(x, z, seed, away, layout)));
       const { top, under, depth } = layers(biome, height, x, z, seed, flat);
       world.surface[k * world.width + i] = height;
       world.biome[k * world.width + i] = biome;
@@ -160,7 +168,7 @@ function fillColumns(world: World, seed: number) {
         // Only rock near the surface can ever show, so only that is worth dressing.
         if (id === BLOCKS.stone && below < 8) id = rock(i, level, k, seed);
         if (biome === 'mesa') id = MESA_BANDS[(((level + 64) % MESA_BANDS.length) + MESA_BANDS.length) % MESA_BANDS.length] as BlockId;
-        if (flat && below === 0) id = villageTop(x, z) ?? id;
+        if (flat && below === 0) id = site.floor?.(x, z) ?? id;
         put(world, i, level, k, id);
       }
       for (let level = height + 1; level <= SEA_LEVEL; level += 1) put(world, i, level, k, BLOCKS.water);
@@ -208,11 +216,44 @@ const GROWTH: Readonly<Record<Biome, { tree: number; plants: ReadonlyArray<reado
   ocean: { tree: 0, plants: [] },
 };
 
+const TREES: Readonly<Record<Biome, TreeKind | null>> = {
+  plains: 'oak',
+  forest: 'oak',
+  taiga: 'spruce',
+  mountains: 'spruce',
+  desert: 'cactus',
+  mesa: null,
+  ocean: null,
+};
+
 /** Trees grow at most one per slot of this many blocks square, so crowns never merge into a wall. */
 const SLOT = 5;
 const EDGE = 3;
 
-function grow(world: World, seed: number) {
+/**
+ * A palm: a trunk that leans a little as it rises, and long fronds out in a star from the top,
+ * drooping at their tips.
+ */
+function palm(world: World, i: number, base: number, k: number, tall: number) {
+  const lean = (i + k) % 2 ? 1 : -1;
+  let ti = i;
+  for (let y = 0; y < tall; y += 1) {
+    if (y === Math.floor(tall / 2)) ti += lean;
+    put(world, ti, base + y, k, BLOCKS.palmLog);
+  }
+  const top = base + tall;
+  put(world, ti, top, k, BLOCKS.palmLeaves);
+  for (const [di, dk] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]] as const) {
+    const reach = di && dk ? 2 : 3;
+    for (let step = 1; step <= reach; step += 1) {
+      const droop = step === reach ? -1 : 0;
+      if (blockAt(world, ti + di * step, top + droop, k + dk * step) === BLOCKS.air) put(world, ti + di * step, top + droop, k + dk * step, BLOCKS.palmLeaves);
+    }
+  }
+}
+
+function grow(world: World, site: Site) {
+  const { seed } = site;
   for (let k = EDGE; k < world.depth - EDGE; k += 1) {
     for (let i = EDGE; i < world.width - EDGE; i += 1) {
       const column = k * world.width + i;
@@ -222,9 +263,9 @@ function grow(world: World, seed: number) {
       const x = columnX(i);
       const z = columnZ(k);
       if (height <= SEA_LEVEL) continue;
-      if (flatDistance(x, z) < 1.5) {
-        // Only the odd tuft on open village lawn, clear of props, benches and paths.
-        if (top === BLOCKS.grass && villageClear(x, z) && hash(i, k, seed + 31) < 0.06) put(world, i, height + 1, k, hash(i, k, seed + 37) < 0.7 ? BLOCKS.tallGrass : BLOCKS.dandelion);
+      if (rectDistance(site.flat, x, z) < 1.5) {
+        // Only the odd tuft on open lawn, where the scene allows it.
+        if (top === BLOCKS.grass && site.plantable?.(x, z) && hash(i, k, seed + 31) < 0.06) put(world, i, height + 1, k, hash(i, k, seed + 37) < 0.7 ? BLOCKS.tallGrass : BLOCKS.dandelion);
         continue;
       }
       const slotI = Math.floor(i / SLOT);
@@ -234,9 +275,11 @@ function grow(world: World, seed: number) {
       const growth = GROWTH[biome];
       if (inSlot && hash(slotI, slotK, seed + 19) < growth.tree) {
         const tall = 4 + Math.floor(hash(i, k, seed + 23) * 3);
-        if (biome === 'desert' && top === BLOCKS.sand) for (let y = 1; y <= tall - 2; y += 1) put(world, i, height + y, k, BLOCKS.cactus);
-        else if (top === BLOCKS.grass && (biome === 'taiga' || biome === 'mountains')) spruce(world, i, height + 1, k, tall + 2);
-        else if (top === BLOCKS.grass) oak(world, i, height + 1, k, tall);
+        const kind = biome in (site.trees ?? {}) ? site.trees?.[biome] : TREES[biome];
+        if (kind === 'cactus' && top === BLOCKS.sand) for (let y = 1; y <= tall - 2; y += 1) put(world, i, height + y, k, BLOCKS.cactus);
+        else if (kind === 'palm' && (top === BLOCKS.grass || top === BLOCKS.sand)) palm(world, i, height + 1, k, tall + 2);
+        else if (kind === 'spruce' && top === BLOCKS.grass) spruce(world, i, height + 1, k, tall + 2);
+        else if (kind === 'oak' && top === BLOCKS.grass) oak(world, i, height + 1, k, tall);
         continue;
       }
       let roll = hash(i, k, seed + 29);
@@ -252,84 +295,11 @@ function grow(world: World, seed: number) {
   }
 }
 
-/** Ripe wheat in every farm row but the middle one, which carries water down the field. */
-function farm(world: World) {
-  for (let k = 0; k < world.depth; k += 1) {
-    for (let i = 0; i < world.width; i += 1) {
-      if (!inRect(columnX(i), columnZ(k), FARM)) continue;
-      const middle = Math.abs(columnZ(k) - (FARM.z1 + FARM.z2) / 2) < BLOCK / 2;
-      if (middle) put(world, i, 0, k, BLOCKS.water);
-      else put(world, i, 1, k, BLOCKS.wheat);
-    }
-  }
-}
+const cache = new Map<string, World>();
 
-/** Planks out over the sea at village level, on log piles that reach down to the sea bed. */
-function dock(world: World) {
-  for (let k = 0; k < world.depth; k += 1) {
-    for (let i = 0; i < world.width; i += 1) {
-      const x = columnX(i);
-      const z = columnZ(k);
-      if (Math.abs(x - DOCK.x) > DOCK.width / 2 || z < DOCK.z1 || z > DOCK.z2) continue;
-      put(world, i, 0, k, BLOCKS.planks);
-      for (let level = 1; level < 4; level += 1) put(world, i, level, k, BLOCKS.air);
-      const edge = Math.abs(x - DOCK.x) > DOCK.width / 2 - BLOCK;
-      if (!edge || k % 3 !== 0) continue;
-      for (let level = -1; level > world.bottom && [BLOCKS.water, BLOCKS.air, BLOCKS.sand].includes(blockAt(world, i, level, k) as never); level -= 1) {
-        put(world, i, level, k, BLOCKS.oakLog);
-      }
-    }
-  }
-}
-
-/**
- * A plank house on a cobble footing: log corners, glass windows, a door at the front and a
- * stepped gable roof that runs front to back.
- */
-function house(world: World, i0: number, k0: number) {
-  const { width: w, depth: d } = HOUSE_SIZE;
-  const mid = Math.floor(w / 2);
-  for (let dk = 0; dk < d; dk += 1) {
-    for (let di = 0; di < w; di += 1) {
-      const i = i0 + di;
-      const k = k0 + dk;
-      put(world, i, 0, k, BLOCKS.cobble);
-      const wall = di === 0 || dk === 0 || di === w - 1 || dk === d - 1;
-      const corner = (di === 0 || di === w - 1) && (dk === 0 || dk === d - 1);
-      for (let level = 1; level <= 3; level += 1) {
-        let id: BlockId = BLOCKS.air;
-        if (corner) id = BLOCKS.oakLog;
-        else if (wall) {
-          id = BLOCKS.planks;
-          const window = level === 2 && (dk === d - 1 ? Math.abs(di - mid) === 1 : di === mid || dk === Math.floor(d / 2));
-          if (window) id = BLOCKS.glass;
-          if (dk === d - 1 && di === mid && level < 3) id = level === 1 ? BLOCKS.doorLower : BLOCKS.doorUpper;
-        }
-        put(world, i, level, k, id);
-      }
-    }
-  }
-  // Each step of the roof comes in one block from both sides, and the gable ends fill the triangle under it.
-  for (let step = 0; step * 2 <= w + 1; step += 1) {
-    const level = 4 + step;
-    const left = -1 + step;
-    const right = w - step;
-    for (let dk = -1; dk <= d; dk += 1) {
-      put(world, i0 + left, level, k0 + dk, BLOCKS.sprucePlanks);
-      put(world, i0 + right, level, k0 + dk, BLOCKS.sprucePlanks);
-    }
-    for (let di = left + 1; di < right; di += 1) {
-      for (const dk of [0, d - 1]) put(world, i0 + di, level, k0 + dk, BLOCKS.planks);
-      for (let dk = 1; dk < d - 1; dk += 1) put(world, i0 + di, level, k0 + dk, BLOCKS.air);
-    }
-  }
-}
-
-const cache = new Map<number, World>();
-
-/** The whole world for a seed. Built once and shared: generating it takes a moment. */
-export function generateWorld(seed = 7): World {
-  const hit = cache.get(seed);
+/** The whole world for a site. Built once and shared: generating it takes a moment. */
+export function buildWorld(site: Site): World {
+  const hit = cache.get(site.key);
   if (hit) return hit;
   const columns = WORLD.width * WORLD.depth;
   const world: World = {
@@ -342,11 +312,24 @@ export function generateWorld(seed = 7): World {
     biome: new Array<Biome>(columns),
     tint: new Float32Array(columns * 3),
   };
-  fillColumns(world, seed);
-  grow(world, seed);
-  farm(world);
-  dock(world);
-  for (const [x, , z] of HOUSES) house(world, ...columnAt(x + BLOCK / 2, z + BLOCK / 2));
-  cache.set(seed, world);
+  fillColumns(world, site);
+  grow(world, site);
+  site.build?.(world);
+  cache.set(site.key, world);
   return world;
+}
+
+/** Every column whose centre lies inside a rectangle, as [i, k]. */
+export function columnsIn(r: Rect): Array<[number, number]> {
+  const out: Array<[number, number]> = [];
+  const [i1, k1] = columnAt(r.x1, r.z1);
+  const [i2, k2] = columnAt(r.x2, r.z2);
+  for (let k = k1; k <= k2; k += 1) {
+    for (let i = i1; i <= i2; i += 1) {
+      const x = columnX(i);
+      const z = columnZ(k);
+      if (x >= r.x1 && x <= r.x2 && z >= r.z1 && z <= r.z2) out.push([i, k]);
+    }
+  }
+  return out;
 }

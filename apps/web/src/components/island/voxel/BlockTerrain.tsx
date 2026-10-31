@@ -1,14 +1,19 @@
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
 import { BufferAttribute, BufferGeometry, type Material, type Vector3 } from 'three';
-import { buildMeshes, type MeshData } from '../../../lib/scenes/voxel/mesh.js';
-import { generateWorld } from '../../../lib/scenes/voxel/world.js';
-import { Animals } from './Animals.js';
-import { Villagers } from './Villagers.js';
+import { buildMeshes, type MeshData, type WorldMeshes } from '../../../lib/scenes/voxel/mesh.js';
+import type { World } from '../../../lib/scenes/voxel/world.js';
 import { plantMaterials, sightUniforms, terrainMaterials, waterMaterials, waterTexture } from './materials.js';
-import { VillageLights } from './VillageProps.js';
 
-type Time = 'day' | 'night';
+const meshCache = new WeakMap<World, WorldMeshes>();
+
+function meshesOf(world: World): WorldMeshes {
+  const hit = meshCache.get(world);
+  if (hit) return hit;
+  const made = buildMeshes(world);
+  meshCache.set(world, made);
+  return made;
+}
 
 function toGeometry(data: MeshData, shaded: boolean): BufferGeometry {
   const geometry = new BufferGeometry();
@@ -44,17 +49,14 @@ function FrameUpdates() {
   return null;
 }
 
-/** The block world round the village: built once from its seed, then drawn as three meshes. */
-export function VoxelGrounds({ time }: { time: Time }) {
-  const meshes = useMemo(() => buildMeshes(generateWorld()), []);
+/** A block world drawn as three meshes: solid blocks, cut-outs and water. Meshes are built once per world. */
+export function BlockTerrain({ world }: { world: World }) {
+  const meshes = meshesOf(world);
   return (
     <group>
       <Surface data={meshes.solid} materials={terrainMaterials()} shaded shadows />
       <Surface data={meshes.plants} materials={plantMaterials()} shaded shadows={false} />
       <Surface data={meshes.water} materials={waterMaterials()} shaded={false} shadows={false} />
-      <VillageLights night={time === 'night'} />
-      <Animals />
-      <Villagers />
       <FrameUpdates />
     </group>
   );

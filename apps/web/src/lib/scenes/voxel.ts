@@ -1,7 +1,8 @@
 import { SIT_DROP } from './rides.js';
 import type { SceneDefinition, Spot, Vec3 } from './types.js';
 import { benchSpot, CAMPFIRE, DOCK, FARM, HUT, WELL, workSpot } from './voxel/layout.js';
-import { generateWorld, topAt } from './voxel/world.js';
+import { villageWorld } from './voxel/village.js';
+import { topAt } from './voxel/world.js';
 
 /** A seat relative to its activity centre: the seat surface height minus how far a sitter drops into it. */
 const sit = ([x, y, z]: Vec3, surface: number, facing: number): Spot => ({ position: [x, surface - SIT_DROP + y, z], facing, seated: true });
@@ -53,7 +54,7 @@ export const voxel: SceneDefinition = {
   characterScale: 1,
   nameTags: false,
   figure: 'blocky',
-  terrainAt: (x, z) => topAt(generateWorld(), x, z),
+  terrainAt: (x, z) => topAt(villageWorld(), x, z),
   // Distance fog, so the world fades out well before its edge.
   fog: [52, 120],
   maxDistance: 46,

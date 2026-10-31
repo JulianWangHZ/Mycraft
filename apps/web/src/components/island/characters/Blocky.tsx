@@ -59,6 +59,31 @@ function Cap({ color }: { color: string }) {
   );
 }
 
+/** A tight cap over the top and sides of the head, as swimmers wear. */
+function SwimCap({ color }: { color: string }) {
+  return (
+    <mesh position={[0, HEAD * 0.82, 0]} castShadow>
+      <boxGeometry args={[HEAD + 0.02, HEAD * 0.4, HEAD + 0.02]} />
+      <meshLambertMaterial color={color} />
+    </mesh>
+  );
+}
+
+/** A square float ring round the waist, red and white in quarters. */
+function FloatRing() {
+  const span = TORSO.width + 0.2;
+  return (
+    <group position={[0, HIP + 0.06, 0]}>
+      {[0, 1, 2, 3].map((side) => (
+        <mesh key={side} rotation={[0, (side * Math.PI) / 2, 0]} position={[Math.sin((side * Math.PI) / 2) * (span / 2), 0, Math.cos((side * Math.PI) / 2) * (span / 2)]}>
+          <boxGeometry args={[span + 0.08, 0.09, 0.08]} />
+          <meshLambertMaterial color={side % 2 ? '#ffffff' : '#e8574a'} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 /**
  * A figure built from six boxes, every face a small pixel painting: square head, flat torso, and
  * arms and legs that swing from the shoulder and hip. It plays the same poses as the rounded figure.
@@ -95,6 +120,7 @@ export function Blocky({ look, shirt, pose, seated, astride = false, headwear = 
         <mesh position={[0, (HIP + NECK) / 2, 0]} material={skin.torso} castShadow>
           <boxGeometry args={[TORSO.width, NECK - HIP, TORSO.depth]} />
         </mesh>
+        {extra === 'floatRing' ? <FloatRing /> : null}
         {extra === 'apron' ? (
           <mesh position={[0, HIP + 0.1, TORSO.depth / 2 + 0.006]}>
             <boxGeometry args={[TORSO.width - 0.04, 0.2, 0.01]} />
@@ -113,6 +139,7 @@ export function Blocky({ look, shirt, pose, seated, astride = false, headwear = 
             <boxGeometry args={[HEAD, HEAD, HEAD]} />
           </mesh>
           {headwear === 'cap' ? <Cap color={headwearColor} /> : null}
+          {headwear === 'swimcap' ? <SwimCap color={headwearColor} /> : null}
         </group>
       </group>
     </group>

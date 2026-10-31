@@ -1,14 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { ANIMAL_KINDS, grazeTarget, placeAnimals, ROAM } from './animals.js';
+import { ANIMAL_KINDS, grazeTarget, placeAnimals, RESORT_HERDS, ROAM, VILLAGE_HERDS } from './animals.js';
+import { resortWorld } from './resort.js';
 import { flatDistance } from './layout.js';
-import { columnAt, generateWorld, groundAt } from './world.js';
+import { villageWorld } from './village.js';
+import { columnAt, groundAt } from './world.js';
 
 describe('animals', () => {
-  const world = generateWorld();
+  const world = villageWorld();
   const animals = placeAnimals(world);
 
   it('places every kind of animal, out of the village, on the ground', () => {
-    expect(new Set(animals.map((a) => a.kind))).toEqual(new Set(ANIMAL_KINDS));
+    expect(new Set(animals.map((a) => a.kind))).toEqual(new Set(VILLAGE_HERDS.map((h) => h.kind)));
+    expect(ANIMAL_KINDS).toEqual(expect.arrayContaining([...new Set(animals.map((a) => a.kind))]));
     for (const { home } of animals) {
       expect(flatDistance(home[0], home[2])).toBeGreaterThanOrEqual(1);
       expect(home[1]).toBeCloseTo(groundAt(world, home[0], home[2]));
@@ -34,5 +37,12 @@ describe('animals', () => {
     const spots = Array.from({ length: 20 }, (_, s) => grazeTarget(animal, 0, s * 4));
     for (const [x, , z] of spots) expect(Math.hypot(x - animal.home[0], z - animal.home[2])).toBeLessThanOrEqual(ROAM + 1e-9);
     expect(new Set(spots.map((p) => p.join())).size).toBeGreaterThan(2);
+  });
+
+  it('puts turtles on the resort beach', () => {
+    const beach = resortWorld();
+    const turtles = placeAnimals(beach, RESORT_HERDS).filter((a) => a.kind === 'turtle');
+    expect(turtles.length).toBeGreaterThan(2);
+    for (const { home } of turtles) expect(home[1]).toBeCloseTo(groundAt(beach, home[0], home[2]));
   });
 });

@@ -3,7 +3,7 @@ import { useMemo, useRef } from 'react';
 import { Vector3, type Group, type PerspectiveCamera } from 'three';
 import { skySpot } from '../../../lib/island/sky-spot.js';
 import { seeded } from '../../../lib/scenes/skyline.js';
-import { generateWorld, topAt } from '../../../lib/scenes/voxel/world.js';
+import { topAt, type World } from '../../../lib/scenes/voxel/world.js';
 
 type Time = 'day' | 'night';
 
@@ -53,14 +53,11 @@ const DISC = { distance: 150, glide: 3 } as const;
  * A square sun by day, a square moon by night. It finds open sky in whatever the camera is
  * looking at, just over the hills, and glides there, so it stays in view from any angle.
  */
-function Disc({ night }: { night: boolean }) {
+function Disc({ night, world }: { night: boolean; world: World }) {
   const group = useRef<Group>(null);
   const ahead = useMemo(() => new Vector3(), []);
   const spot = useRef({ heading: 0, rise: 0.3 });
-  const terrainAt = useMemo(() => {
-    const world = generateWorld();
-    return (x: number, z: number) => topAt(world, x, z);
-  }, []);
+  const terrainAt = useMemo(() => (x: number, z: number) => topAt(world, x, z), [world]);
   useFrame(({ camera, size }, delta) => {
     const node = group.current;
     if (!node) return;
@@ -97,11 +94,12 @@ function Disc({ night }: { night: boolean }) {
   );
 }
 
-export function VoxelSky({ time }: { time: Time }) {
+/** Sky of a block-world scene: a sun or moon that keeps to open sky over `world`, and clouds by day. */
+export function BlockSky({ time, world }: { time: Time; world: World }) {
   const night = time === 'night';
   return (
     <>
-      <Disc night={night} />
+      <Disc night={night} world={world} />
       {night ? null : <Clouds />}
     </>
   );

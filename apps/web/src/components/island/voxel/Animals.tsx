@@ -1,10 +1,10 @@
 import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef, type ReactNode } from 'react';
 import { Vector3, type Group } from 'three';
-import { grazeTarget, placeAnimals, type Animal, type AnimalKind } from '../../../lib/scenes/voxel/animals.js';
-import { generateWorld, groundAt } from '../../../lib/scenes/voxel/world.js';
+import { grazeTarget, placeAnimals, VILLAGE_HERDS, type Animal, type AnimalKind, type Herd } from '../../../lib/scenes/voxel/animals.js';
+import { groundAt, type World } from '../../../lib/scenes/voxel/world.js';
 
-const SPEED: Readonly<Record<AnimalKind, number>> = { sheep: 0.45, cow: 0.4, pig: 0.45, chicken: 0.5, wolf: 0.7, rabbit: 0.6 };
+const SPEED: Readonly<Record<AnimalKind, number>> = { sheep: 0.45, cow: 0.4, pig: 0.45, chicken: 0.5, wolf: 0.7, rabbit: 0.6, turtle: 0.15 };
 /** Rabbits hop rather than walk. */
 const HOP = 0.08;
 
@@ -101,6 +101,25 @@ const BUILDS: Readonly<Record<AnimalKind, Build>> = {
     neck: [0, 0.4, 0.24],
     legs: { size: [0.07, 0.22, 0.07], color: '#b8b4ad', spread: [0.07, 0.18], pairs: 2 },
   },
+  turtle: {
+    body: (
+      <>
+        <Box at={[0, 0.13, -0.02]} size={[0.36, 0.12, 0.42]} color="#3f7a4a" />
+        <Box at={[0, 0.2, -0.02]} size={[0.26, 0.04, 0.32]} color="#5a9a5a" />
+        <Box at={[0, 0.08, -0.02]} size={[0.34, 0.03, 0.4]} color="#e2d49c" />
+      </>
+    ),
+    head: (
+      <>
+        <Box at={[0, 0, 0.06]} size={[0.12, 0.1, 0.12]} color="#7fb07a" />
+        {[-1, 1].map((side) => (
+          <Box key={side} at={[side * 0.045, 0.02, 0.121]} size={[0.025, 0.02, 0.005]} color="#1f1f1f" />
+        ))}
+      </>
+    ),
+    neck: [0, 0.12, 0.2],
+    legs: { size: [0.1, 0.08, 0.14], color: '#7fb07a', spread: [0.19, 0.14], pairs: 2 },
+  },
   rabbit: {
     body: (
       <>
@@ -141,13 +160,12 @@ const BUILDS: Readonly<Record<AnimalKind, Build>> = {
   },
 };
 
-function Creature({ animal, index, still }: { animal: Animal; index: number; still: boolean }) {
+function Creature({ world, animal, index, still }: { world: World; animal: Animal; index: number; still: boolean }) {
   const group = useRef<Group>(null);
   const head = useRef<Group>(null);
   const legs = useRef<Group>(null);
   const goal = useMemo(() => new Vector3(), []);
   const build = BUILDS[animal.kind];
-  const world = generateWorld();
   useFrame(({ clock }, delta) => {
     const node = group.current;
     if (!node) return;
@@ -192,12 +210,12 @@ function Creature({ animal, index, still }: { animal: Animal; index: number; sti
 }
 
 /** Farm animals grazing round the village, wolves prowling the woods and rabbits on open ground. */
-export function Animals({ still = false }: { still?: boolean }) {
-  const animals = useMemo(() => placeAnimals(generateWorld()), []);
+export function Animals({ world, herds = VILLAGE_HERDS, still = false }: { world: World; herds?: readonly Herd[]; still?: boolean }) {
+  const animals = useMemo(() => placeAnimals(world, herds), [world, herds]);
   return (
     <group>
       {animals.map((animal, index) => (
-        <Creature key={index} animal={animal} index={index} still={still} />
+        <Creature key={index} world={world} animal={animal} index={index} still={still} />
       ))}
     </group>
   );

@@ -1,6 +1,5 @@
 import { DataTexture, RepeatWrapping, SRGBColorSpace, type Texture } from 'three';
 import { boards, grass, paint, setts, type SurfacePixels } from '../../../lib/textures/park-surfaces.js';
-import { mosaic, ripples, travertine } from '../../../lib/textures/pool-surfaces.js';
 
 export interface SurfaceMaps {
   map: Texture;
@@ -47,17 +46,4 @@ export const surfaces = {
     tiled(maps(`setts:${night}`, () => (night ? setts('#6d6488', '#4e4766') : setts('#efe2cc', '#c7b597'))), x, y),
   deck: (x: number, y: number) => tiled(maps('deck', () => boards('#c99d76')), x, y),
   steel: (colour: string) => maps(`paint:${colour}`, () => paint(colour)),
-  travertine: (night: boolean, x: number, y: number) => tiled(maps(`travertine:${night}`, () => travertine(night ? '#8a84a8' : '#efe6d6')), x, y),
-  mosaic: (colour: string, x: number, y: number) => tiled(maps(`mosaic:${colour}`, () => mosaic(colour)), x, y),
 };
-
-let rippleMap: Texture | null = null;
-
-/** Shared ripple normal map for water surfaces; each pool scrolls its own copy. */
-export function waterNormals(x: number, y: number): Texture {
-  rippleMap ??= upload(ripples(), 128, false);
-  const copy = rippleMap.clone();
-  copy.repeat.set(x, y);
-  copy.needsUpdate = true;
-  return copy;
-}
