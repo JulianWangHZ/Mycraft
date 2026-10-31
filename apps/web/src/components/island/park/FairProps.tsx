@@ -6,6 +6,7 @@ import { BALLOON_CART, BENCHES, BINS, GATE, GROUNDS, QUEUE_LANES, queueLines, qu
 import type { Spot, Vec3 } from '../../../lib/scenes/types.js';
 import { useCanvasTexture } from '../office/canvas-texture.js';
 import { Beam, Cube, Fence, Flames, Notes, Post } from '../blocks/parts.js';
+import { Octagon } from './BlockRides.js';
 
 /** A wool awning in stripes over a stall, `y` high, overhanging the front. */
 function Awning({ width, depth, y, tiles }: { width: number; depth: number; y: number; tiles: readonly Tile[] }) {
@@ -61,9 +62,7 @@ export function BlockFoodStand({ night }: { night: boolean }) {
 export function BlockBandstand({ night }: { night: boolean }) {
   return (
     <group position={[0, 0, -0.6]}>
-      {[0, Math.PI / 4].map((turn) => (
-        <Cube key={turn} at={[0, 0, 0]} size={[1.7, 0.3, 1.7]} top="planks" side="stoneBricks" turn={turn} />
-      ))}
+      <Octagon y={0} width={2.05} height={0.3} top="planks" side="stoneBricks" />
       {Array.from({ length: 8 }, (_, i) => {
         const a = (i / 8) * Math.PI * 2;
         return <Post key={i} at={[Math.cos(a) * 0.95, 0.3, Math.sin(a) * 0.95]} height={1.8} thick={0.1} />;

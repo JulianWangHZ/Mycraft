@@ -8,12 +8,15 @@ import type { Vec3 } from '../../../lib/scenes/types.js';
 import { blockFaces } from '../blocks/materials.js';
 import { Beam, Cube, Post } from '../blocks/parts.js';
 
-/** A flat octagon of blocks: two squares, one turned an eighth of a turn. */
-function Octagon({ y, width, height, top, side = top }: { y: number; width: number; height: number; top: Tile; side?: Tile }) {
+/** How much lower the turned square of an octagon sits, so the two tops never share a plane and flicker. */
+export const OCTAGON_STEP = 0.012;
+
+/** A flat octagon of blocks: two squares, one turned an eighth of a turn and a touch lower. */
+export function Octagon({ y, width, height, top, side = top }: { y: number; width: number; height: number; top: Tile; side?: Tile }) {
   return (
     <>
       <Cube at={[0, y, 0]} size={[width * 0.83, height, width * 0.83]} top={top} side={side} />
-      <Cube at={[0, y, 0]} size={[width * 0.83, height, width * 0.83]} top={top} side={side} turn={Math.PI / 4} />
+      <Cube at={[0, y, 0]} size={[width * 0.83, height - OCTAGON_STEP, width * 0.83]} top={top} side={side} turn={Math.PI / 4} />
     </>
   );
 }
@@ -83,7 +86,7 @@ export function BlockCarousel({ night }: { night: boolean }) {
       <Octagon y={0.12} width={DECK_WIDTH} height={CAROUSEL.deck - 0.12} top="planks" side="woolYellow" />
       <Cube at={[0, CAROUSEL.deck, 0]} size={[0.6, ROOF_Y - CAROUSEL.deck, 0.6]} top="quartzTop" side="quartzPillar" />
       {[0, 1, 2, 3].map((i) => (
-        <Cube key={i} at={[0, 1.0, 0]} size={[0.66, 0.6, 0.66]} top="glass" side="woolYellow" turn={(i * Math.PI) / 8} />
+        <Cube key={i} at={[0, 1.0, 0]} size={[0.66, 0.6 - i * OCTAGON_STEP, 0.66]} top="glass" side="woolYellow" turn={(i * Math.PI) / 8} />
       ))}
       {[
         { y: ROOF_Y, width: DECK_WIDTH + 0.6, tile: 'woolRed' as Tile },
@@ -244,10 +247,13 @@ const SAMPLES = 220;
 const GAUGE = 0.84;
 
 /** A coaster car: an open iron box, dark inside, with a bumper at each end. */
+/** How high the cart rides above the track's centre line: its wheels sit on the rail tops. */
+const RIDE_HEIGHT = 0.1;
+
 function Cart({ lead }: { lead: boolean }) {
   const { carWidth: w, carLength: l, carHeight: h } = COASTER;
   return (
-    <group>
+    <group position={[0, RIDE_HEIGHT, 0]}>
       <Cube at={[0, 0.06, 0]} size={[w, 0.06, l]} top="jukeboxSide" side="ironBlock" />
       {[-1, 1].map((s) => (
         <Cube key={`x${s}`} at={[(s * (w - 0.06)) / 2, 0.06, 0]} size={[0.06, h, l]} top="ironBlock" side="ironBlock" />
@@ -274,7 +280,7 @@ export function BlockCoaster({ night }: { night: boolean }) {
         const u = (i + 0.5) / SAMPLES;
         const a = coasterTrack.getPointAt(i / SAMPLES);
         const b = coasterTrack.getPointAt((i + 1) / SAMPLES);
-        return { at: coasterTrack.getPointAt(u), frame: trackFrame(u), length: a.distanceTo(b) + 0.02 };
+        return { at: coasterTrack.getPointAt(u), frame: trackFrame(u), length: a.distanceTo(b) + 0.002 };
       }),
     [],
   );

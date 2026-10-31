@@ -2,7 +2,7 @@ import type { BiomeLayout } from './biomes.js';
 import { BLOCKS, type BlockId } from './blocks.js';
 import { DECK, LANES, LAP_POOL, laneSpot, PALMS, SPLASH_POOL } from '../pool-layout.js';
 import { BLOCK, inRect, type Rect } from './layout.js';
-import { blockAt, buildWorld, columnAt, columnsIn, put, type Site, type World } from './world.js';
+import { buildWorld, columnAt, columnsIn, palm, put, type Site, type World } from './world.js';
 
 /**
  * The beach club: a stone deck by the sea with its pools let into it, a hotel behind, palms on
@@ -105,20 +105,6 @@ function hotel(world: World) {
   for (const di of [-3, 3]) put(world, mid + di, 1, k2 + 1, BLOCKS.glowPane);
 }
 
-/** A palm on its own: a trunk with fronds out in a star from the top, drooping at their tips. */
-function palmTree(world: World, i: number, base: number, k: number, tall: number) {
-  for (let level = base; level < base + tall; level += 1) put(world, i, level, k, BLOCKS.palmLog);
-  const top = base + tall;
-  put(world, i, top, k, BLOCKS.palmLeaves);
-  for (const [di, dk] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]] as const) {
-    const reach = di && dk ? 2 : 3;
-    for (let step = 1; step <= reach; step += 1) {
-      const level = step === reach ? top - 1 : top;
-      if (blockAt(world, i + di * step, level, k + dk * step) === BLOCKS.air) put(world, i + di * step, level, k + dk * step, BLOCKS.palmLeaves);
-    }
-  }
-}
-
 /**
  * An islet: a mound of sand rising out of the sea with a palm on it. The first one carries a
  * lighthouse instead, striped red and white, with a lantern room at the top.
@@ -137,7 +123,7 @@ function islet(world: World, { at: [cx, cz], radius }: { at: readonly [number, n
   }
   const crest = world.surface[ck * world.width + ci] as number;
   if (index > 0) {
-    palmTree(world, ci, crest + 1, ck, 6);
+    palm(world, ci, crest + 1, ck, 6);
     return;
   }
   // The lighthouse stands on a cobble footing a block wider all round, then rises in red and
@@ -165,7 +151,7 @@ function deckPalms(world: World) {
   PALMS.forEach(([x, , z], index) => {
     const [i, k] = columnAt(x, z);
     put(world, i, 0, k, BLOCKS.grass);
-    palmTree(world, i, 1, k, 6 + (index % 3));
+    palm(world, i, 1, k, 6 + (index % 3));
   });
 }
 

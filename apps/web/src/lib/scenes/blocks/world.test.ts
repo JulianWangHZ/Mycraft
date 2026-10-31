@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { village } from '../village.js';
 import { BIOMES } from './biomes.js';
 import { BLOCKS, isOpaque } from './blocks.js';
+import { fairgroundWorld } from './fairground.js';
 import { resortWorld } from './resort.js';
 import { BLOCK, DOCK, HOUSE_SIZE, HOUSES, SEA_LEVEL, WORLD, workSpot } from './layout.js';
 import { VILLAGE, villageWorld } from './village-world.js';
@@ -117,7 +118,7 @@ describe('village world', () => {
 
   it('never leaves a trunk hanging in the air, in any scene', () => {
     const trunks = new Set<number>([BLOCKS.oakLog, BLOCKS.spruceLog, BLOCKS.palmLog, BLOCKS.cactus]);
-    for (const w of [world, resortWorld()]) {
+    for (const w of [world, resortWorld(), fairgroundWorld()]) {
       for (let level = w.bottom + 1; level < w.top; level += 1) {
         for (let k = 0; k < w.depth; k += 1) {
           for (let i = 0; i < w.width; i += 1) {
@@ -129,6 +130,42 @@ describe('village world', () => {
           }
         }
       }
+    }
+  });
+
+  it('never leaves leaves floating: every leaf joins a trunk face to face, in any scene', () => {
+    const leaves = new Set<number>([BLOCKS.oakLeaves, BLOCKS.spruceLeaves, BLOCKS.palmLeaves]);
+    const trunks = new Set<number>([BLOCKS.oakLog, BLOCKS.spruceLog, BLOCKS.palmLog]);
+    for (const w of [world, resortWorld(), fairgroundWorld()]) {
+      const span = w.top - w.bottom;
+      const key = (i: number, level: number, k: number) => ((level - w.bottom) * w.depth + k) * w.width + i;
+      const reached = new Uint8Array(w.width * w.depth * span);
+      const queue: Array<[number, number, number]> = [];
+      for (let level = w.bottom; level < w.top; level += 1) {
+        for (let k = 0; k < w.depth; k += 1) {
+          for (let i = 0; i < w.width; i += 1) {
+            if (trunks.has(blockAt(w, i, level, k))) queue.push([i, level, k]);
+          }
+        }
+      }
+      while (queue.length) {
+        const [i, level, k] = queue.pop() as [number, number, number];
+        for (const [di, dl, dk] of [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]] as const) {
+          const [ni, nl, nk] = [i + di, level + dl, k + dk];
+          if (!leaves.has(blockAt(w, ni, nl, nk)) || reached[key(ni, nl, nk)]) continue;
+          reached[key(ni, nl, nk)] = 1;
+          queue.push([ni, nl, nk]);
+        }
+      }
+      let floating = 0;
+      for (let level = w.bottom; level < w.top; level += 1) {
+        for (let k = 0; k < w.depth; k += 1) {
+          for (let i = 0; i < w.width; i += 1) {
+            if (leaves.has(blockAt(w, i, level, k)) && !reached[key(i, level, k)]) floating += 1;
+          }
+        }
+      }
+      expect(floating).toBe(0);
     }
   });
 });

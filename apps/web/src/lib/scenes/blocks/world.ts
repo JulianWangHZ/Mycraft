@@ -233,28 +233,28 @@ const SLOT = 5;
 const EDGE = 3;
 
 /**
- * A palm: a trunk that leans a little as it rises, and long fronds out in a star from the top,
- * drooping at their tips.
+ * A palm: a trunk, leaning a block to one side halfway up if `lean` is set, topped with a square
+ * of fronds and four long fronds reaching out from it, their tips hanging down. Every block
+ * touches the next face to face, so no frond ever floats beside the trunk.
  */
-function palm(world: World, i: number, base: number, k: number, tall: number) {
-  const lean = (i + k) % 2 ? 1 : -1;
+export function palm(world: World, i: number, base: number, k: number, tall: number, lean = 0) {
   let ti = i;
   for (let y = 0; y < tall; y += 1) {
-    if (y === Math.floor(tall / 2)) {
-      // Step over to lean, with the trunk doubled up at the step so it stays joined face to face.
+    if (lean && y === Math.floor(tall / 2)) {
+      // Step over, with the trunk doubled up at the step so it stays joined.
       ti += lean;
       put(world, ti, base + y - 1, k, BLOCKS.palmLog);
     }
     put(world, ti, base + y, k, BLOCKS.palmLog);
   }
   const top = base + tall;
-  put(world, ti, top, k, BLOCKS.palmLeaves);
-  for (const [di, dk] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]] as const) {
-    const reach = di && dk ? 2 : 3;
-    for (let step = 1; step <= reach; step += 1) {
-      const droop = step === reach ? -1 : 0;
-      if (blockAt(world, ti + di * step, top + droop, k + dk * step) === BLOCKS.air) put(world, ti + di * step, top + droop, k + dk * step, BLOCKS.palmLeaves);
-    }
+  const leaf = (di: number, level: number, dk: number) => {
+    if (blockAt(world, ti + di, level, k + dk) === BLOCKS.air) put(world, ti + di, level, k + dk, BLOCKS.palmLeaves);
+  };
+  for (let dk = -1; dk <= 1; dk += 1) for (let di = -1; di <= 1; di += 1) leaf(di, top, dk);
+  for (const [di, dk] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+    for (let step = 2; step <= 3; step += 1) leaf(di * step, top, dk * step);
+    leaf(di * 3, top - 1, dk * 3);
   }
 }
 
@@ -283,7 +283,7 @@ function grow(world: World, site: Site) {
         const tall = 4 + Math.floor(hash(i, k, seed + 23) * 3);
         const kind = biome in (site.trees ?? {}) ? site.trees?.[biome] : TREES[biome];
         if (kind === 'cactus' && top === BLOCKS.sand) for (let y = 1; y <= tall - 2; y += 1) put(world, i, height + y, k, BLOCKS.cactus);
-        else if (kind === 'palm' && (top === BLOCKS.grass || top === BLOCKS.sand)) palm(world, i, height + 1, k, tall + 2);
+        else if (kind === 'palm' && (top === BLOCKS.grass || top === BLOCKS.sand)) palm(world, i, height + 1, k, tall + 2, (i + k) % 2 ? 1 : -1);
         else if (kind === 'spruce' && top === BLOCKS.grass) spruce(world, i, height + 1, k, tall + 2);
         else if (kind === 'oak' && top === BLOCKS.grass) oak(world, i, height + 1, k, tall);
         continue;
