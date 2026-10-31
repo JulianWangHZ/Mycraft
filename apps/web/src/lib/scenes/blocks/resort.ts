@@ -102,7 +102,7 @@ function hotel(world: World) {
     for (const i of [i1 - 1, i2 + 1]) put(world, i, height, k, BLOCKS.terracotta);
   }
   // Glowing lanterns by the lobby doors.
-  for (const di of [-3, 3]) put(world, mid + di, 1, k2 + 1, BLOCKS.seaLantern);
+  for (const di of [-3, 3]) put(world, mid + di, 1, k2 + 1, BLOCKS.glowPane);
 }
 
 /** A palm on its own: a trunk with fronds out in a star from the top, drooping at their tips. */
@@ -154,7 +154,7 @@ function islet(world: World, { at: [cx, cz], radius }: { at: readonly [number, n
   }
   const room = base + LIGHTHOUSE.height;
   for (const [di, dk] of [[0, 0], [1, 0], [0, 1], [1, 1]] as const) {
-    put(world, ci + di, room, ck + dk, BLOCKS.seaLantern);
+    put(world, ci + di, room, ck + dk, BLOCKS.glowPane);
     put(world, ci + di, room + 1, ck + dk, BLOCKS.glass);
     put(world, ci + di, room + 2, ck + dk, BLOCKS.terracotta);
   }

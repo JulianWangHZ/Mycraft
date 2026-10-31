@@ -1,13 +1,13 @@
-import { BLOCK, benchSpot, FARM, HUT, LAMPS, WELL } from '../../../lib/scenes/voxel/layout.js';
-import { BED_HEIGHT, BED_SPACING, BENCH_HEIGHT, voxel } from '../../../lib/scenes/voxel.js';
+import { BLOCK, benchSpot, FARM, HUT, LAMPS, WELL } from '../../../lib/scenes/blocks/layout.js';
+import { BED_HEIGHT, BED_SPACING, BENCH_HEIGHT, village } from '../../../lib/scenes/village.js';
 import type { Spot, Vec3 } from '../../../lib/scenes/types.js';
 import { Cube, Fence, FENCE, Flames, Notes, Post } from './parts.js';
 
 /** The workbench a working agent stands at. */
-export function CraftingTable({ spot }: { spot: Spot }) {
+export function Workbench({ spot }: { spot: Spot }) {
   const [x, y, z] = spot.position;
   const ahead = 0.5;
-  return <Cube at={[x + Math.sin(spot.facing) * ahead, y, z + Math.cos(spot.facing) * ahead]} top="craftingTop" side="craftingSide" bottom="planks" turn={spot.facing} />;
+  return <Cube at={[x + Math.sin(spot.facing) * ahead, y, z + Math.cos(spot.facing) * ahead]} top="workbenchTop" side="workbenchSide" bottom="planks" turn={spot.facing} />;
 }
 
 function Campfire({ night }: { night: boolean }) {
@@ -30,7 +30,7 @@ function Kitchen() {
     <group>
       <Cube at={[-0.25, 0, 0]} top="furnaceSide" side="furnaceSide" front="furnaceFront" />
       <Cube at={[0.25, 0, 0]} top="furnaceSide" side="furnaceSide" front="furnaceFront" />
-      <Cube at={[0.8, 0, 0]} top="craftingTop" side="craftingSide" bottom="planks" />
+      <Cube at={[0.8, 0, 0]} top="workbenchTop" side="workbenchSide" bottom="planks" />
       <Cube at={[-0.8, 0, 0]} size={[0.44, 0.44, 0.44]} top="planks" side="oakLog" />
     </group>
   );
@@ -76,7 +76,7 @@ function HayBales() {
 
 /** Fence round the farm field, open at the front for a gate, with a scarecrow in the middle. */
 function Farm() {
-  const [cx, , cz] = voxel.activities.ballpit;
+  const [cx, , cz] = village.activities.ballpit;
   const x1 = FARM.x1 - cx - 0.2;
   const x2 = FARM.x2 - cx + 0.2;
   const z1 = FARM.z1 - cz - 0.2;

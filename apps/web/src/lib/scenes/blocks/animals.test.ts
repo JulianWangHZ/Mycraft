@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { ANIMAL_KINDS, grazeTarget, placeAnimals, RESORT_HERDS, ROAM, VILLAGE_HERDS } from './animals.js';
 import { resortWorld } from './resort.js';
 import { flatDistance } from './layout.js';
-import { villageWorld } from './village.js';
+import { villageWorld } from './village-world.js';
 import { columnAt, groundAt } from './world.js';
 
 describe('animals', () => {

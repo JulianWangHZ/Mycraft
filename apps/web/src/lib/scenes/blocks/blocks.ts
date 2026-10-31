@@ -55,15 +55,22 @@ export const TILES = [
   'quartzPillar',
   'quartzTop',
   'terracotta',
-  'seaLantern',
+  'glowPane',
   'concreteOrange',
   'concreteYellow',
   'concreteCyan',
   'woolBlue',
   'woolYellow',
+  'stoneBricks',
+  'rail',
+  'ironBlock',
+  'woolPink',
+  'woolPurple',
+  'woolGreen',
+  'lantern',
   // Faces only used by the village props.
-  'craftingTop',
-  'craftingSide',
+  'workbenchTop',
+  'workbenchSide',
   'furnaceFront',
   'furnaceSide',
   'hayTop',
@@ -139,7 +146,8 @@ export const BLOCKS = {
   concreteWhite: 42,
   quartzPillar: 43,
   terracotta: 44,
-  seaLantern: 45,
+  glowPane: 45,
+  stoneBricks: 46,
 } as const;
 export type BlockName = keyof typeof BLOCKS;
 export type BlockId = (typeof BLOCKS)[BlockName];
@@ -190,7 +198,8 @@ export const KINDS: Readonly<Record<Exclude<BlockId, 0>, BlockKind>> = {
   [BLOCKS.concreteWhite]: cube('concreteWhite'),
   [BLOCKS.quartzPillar]: cube('quartzTop', 'quartzPillar'),
   [BLOCKS.terracotta]: cube('terracotta'),
-  [BLOCKS.seaLantern]: cube('seaLantern'),
+  [BLOCKS.glowPane]: cube('glowPane'),
+  [BLOCKS.stoneBricks]: cube('stoneBricks'),
 };
 
 export function kindOf(id: number): BlockKind | null {

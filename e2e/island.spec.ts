@@ -36,7 +36,7 @@ test('switches scenes and hides agents from the settings menu', async ({ page })
 });
 
 test('serves an empty model manifest for every scene', async ({ request }) => {
-  for (const scene of ['office', 'park', 'pool', 'voxel']) {
+  for (const scene of ['office', 'park', 'pool', 'village']) {
     const response = await request.get(`/scenes/${scene}/manifest.json`);
     expect(response.status()).toBe(200);
     expect(await response.json()).toEqual({ characters: {} });

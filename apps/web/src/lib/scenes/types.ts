@@ -37,7 +37,7 @@ export interface Outfit {
   extra: Extra;
 }
 
-export const SCENE_IDS = ['office', 'park', 'pool', 'voxel'] as const;
+export const SCENE_IDS = ['office', 'park', 'pool', 'village'] as const;
 export type SceneId = (typeof SCENE_IDS)[number];
 
 export interface SceneDefinition {

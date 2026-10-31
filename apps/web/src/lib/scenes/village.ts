@@ -1,8 +1,8 @@
 import { SIT_DROP } from './rides.js';
 import type { SceneDefinition, Spot, Vec3 } from './types.js';
-import { benchSpot, CAMPFIRE, DOCK, FARM, HUT, WELL, workSpot } from './voxel/layout.js';
-import { villageWorld } from './voxel/village.js';
-import { topAt } from './voxel/world.js';
+import { benchSpot, CAMPFIRE, DOCK, FARM, HUT, WELL, workSpot } from './blocks/layout.js';
+import { villageWorld } from './blocks/village-world.js';
+import { topAt } from './blocks/world.js';
 
 /** A seat relative to its activity centre: the seat surface height minus how far a sitter drops into it. */
 const sit = ([x, y, z]: Vec3, surface: number, facing: number): Spot => ({ position: [x, surface - SIT_DROP + y, z], facing, seated: true });
@@ -14,8 +14,8 @@ export const BED_SPACING = 0.9;
 const DOCK_END: Vec3 = [DOCK.x, 0, DOCK.z2 - 0.8];
 
 /** A village in a block world: agents work at benches in the yard and spend their breaks round the village. */
-export const voxel: SceneDefinition = {
-  id: 'voxel',
+export const village: SceneDefinition = {
+  id: 'village',
   // Stand behind the bench, facing it and the camera; benches are waist high, so nobody sits.
   seatAt: (index) => ({ position: workSpot(index), facing: 0, seated: false }),
   activities: {

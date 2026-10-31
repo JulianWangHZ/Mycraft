@@ -2,7 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';
 import type { Mesh } from 'three';
 import { SLIDE, SLIDE_LEGS, slideCurve, SPLASH_POOL, WATER } from '../../../lib/scenes/pool-layout.js';
-import { Cube, Post } from '../voxel/parts.js';
+import { Cube, Post } from '../blocks/parts.js';
 
 /** How many straight pieces the flume is built from, start to splash. */
 const PIECES = 34;

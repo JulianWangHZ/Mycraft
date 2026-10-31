@@ -1,4 +1,4 @@
-import type { Tile } from '../scenes/voxel/blocks.js';
+import type { Tile } from '../scenes/blocks/blocks.js';
 import { hash, rgb, shade } from './relief.js';
 
 /** Block faces are tiny pixel-art squares, drawn with hard pixels. */
@@ -267,14 +267,31 @@ const PAINTERS: Readonly<Record<Tile, Painter>> = {
   quartzTop: (x, y) => shade(rgb('#efece6'), (x === 0 || y === 0 || x === 15 || y === 15 ? 0.88 : 1) * (0.97 + hash(x, y, 83) * 0.04)),
   terracotta: (x, y) => shade(rgb('#b8623a'), (y % 8 === 7 ? 0.78 : 1) * (0.93 + hash(x, Math.floor(y / 8), 84) * 0.1)),
   // A glowing block: pale aqua panes in a frame.
-  seaLantern: (x, y) => (x === 0 || y === 0 || x === 15 || y === 15 || x === 7 || y === 7 ? rgb('#9fd8d0') : shade(rgb('#e6fbf6'), 0.94 + hash(x, y, 85) * 0.06)),
+  glowPane: (x, y) => (x === 0 || y === 0 || x === 15 || y === 15 || x === 7 || y === 7 ? rgb('#9fd8d0') : shade(rgb('#e6fbf6'), 0.94 + hash(x, y, 85) * 0.06)),
   concreteOrange: speckle('#e4782a', 86, 0.05),
   concreteYellow: speckle('#f2c43a', 87, 0.05),
   concreteCyan: speckle('#2aa6b8', 88, 0.05),
   woolBlue: speckle('#3a5fc2', 89, 0.12),
   woolYellow: speckle('#f2cf3c', 90, 0.12),
-  craftingTop: (x, y) => (x === 0 || y === 0 || x === 15 || y === 15 ? rgb('#6b4a2a') : x % 5 === 2 || y % 5 === 2 ? rgb('#8d6a3e') : shade(rgb('#c09359'), 0.92 + hash(x, y, 51) * 0.12)),
-  craftingSide: (x, y) => (y < 3 ? shade(rgb('#a77a47'), 0.9) : (x === 3 || x === 12) && y > 5 && y < 13 ? rgb('#7d7d82') : boards('#b88c56', 52)(x, y)),
+  // Stone bricks: two courses per face, each brick half the width, joints offset course to course.
+  stoneBricks: (x, y) => {
+    const course = Math.floor(y / 8);
+    const joint = y % 8 === 7 || (x + (course % 2) * 8) % 16 === 15;
+    return joint ? rgb('#5e5e62') : shade(rgb('#8c8c90'), 0.9 + hash(x, y, 91) * 0.14);
+  },
+  // Track seen from above: plank sleepers across, two iron rails along, the rest open.
+  rail: (x, y) => {
+    if (x === 3 || x === 12) return shade(rgb('#a8a8ae'), 0.9 + hash(x, y, 92) * 0.15);
+    if (y % 4 < 2) return shade(rgb('#7a5a36'), 0.9 + hash(x, y, 93) * 0.12);
+    return null;
+  },
+  ironBlock: (x, y) => shade(rgb('#c9c9cf'), (x === 0 || y === 0 ? 1.08 : x === 15 || y === 15 ? 0.8 : 1) * (0.95 + hash(x, y, 94) * 0.05)),
+  woolPink: speckle('#ef8fb3', 95, 0.12),
+  woolPurple: speckle('#8a4fc2', 96, 0.12),
+  woolGreen: speckle('#5aa83a', 97, 0.12),
+  lantern: (x, y) => (x <= 2 || x >= 13 || y <= 2 || y >= 13 ? rgb('#3b3b42') : shade(rgb('#ffcf6a'), 0.92 + hash(x, y, 98) * 0.12)),
+  workbenchTop: (x, y) => (x === 0 || y === 0 || x === 15 || y === 15 ? rgb('#6b4a2a') : x % 5 === 2 || y % 5 === 2 ? rgb('#8d6a3e') : shade(rgb('#c09359'), 0.92 + hash(x, y, 51) * 0.12)),
+  workbenchSide: (x, y) => (y < 3 ? shade(rgb('#a77a47'), 0.9) : (x === 3 || x === 12) && y > 5 && y < 13 ? rgb('#7d7d82') : boards('#b88c56', 52)(x, y)),
   furnaceFront: (x, y) => (x > 3 && x < 12 && y > 8 && y < 14 ? (y > 11 ? rgb('#ff9a3c') : rgb('#2b2522')) : stones('#8a8a8e', '#4b4b50', 53)(x, y)),
   furnaceSide: stones('#8a8a8e', '#4b4b50', 54),
   hayTop: (x, y) => (Math.hypot(x - 7.5, y - 7.5) < 2 ? rgb('#a4882e') : shade(rgb('#d8b844'), 0.85 + hash(x, y, 55) * 0.25)),

@@ -1,8 +1,8 @@
 import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import type { Group } from 'three';
-import type { Tile } from '../../../lib/scenes/voxel/blocks.js';
-import { BLOCK } from '../../../lib/scenes/voxel/layout.js';
+import type { Tile } from '../../../lib/scenes/blocks/blocks.js';
+import { BLOCK } from '../../../lib/scenes/blocks/layout.js';
 import type { Vec3 } from '../../../lib/scenes/types.js';
 import { blockFaces } from './materials.js';
 
@@ -98,6 +98,24 @@ export function Fence({ from, to }: { from: Vec3; to: Vec3 }) {
       {FENCE.rails.map((y) => (
         <Cube key={y} at={[mid[0], y, mid[2]]} size={[FENCE.rail / 2, FENCE.rail * 1.5, length]} top="planks" side="planks" turn={turn} />
       ))}
+    </group>
+  );
+}
+
+/** A square beam of blocks from one point to another, for frames, spokes and braces. */
+export function Beam({ from, to, thick = 0.14, tile = 'quartzPillar', end = tile }: { from: Vec3; to: Vec3; thick?: number; tile?: Tile; end?: Tile }) {
+  const dx = to[0] - from[0];
+  const dy = to[1] - from[1];
+  const dz = to[2] - from[2];
+  const length = Math.hypot(dx, dy, dz);
+  // Point the box's +y along the beam: yaw round to face it, then pitch down from upright.
+  const yaw = Math.atan2(dx, dz);
+  const pitch = Math.acos(Math.max(-1, Math.min(1, dy / (length || 1))));
+  return (
+    <group position={[(from[0] + to[0]) / 2, (from[1] + to[1]) / 2, (from[2] + to[2]) / 2]} rotation={[0, yaw, 0]}>
+      <mesh rotation={[pitch, 0, 0]} material={blockFaces(end, tile)} castShadow>
+        <boxGeometry args={[thick, length, thick]} />
+      </mesh>
     </group>
   );
 }

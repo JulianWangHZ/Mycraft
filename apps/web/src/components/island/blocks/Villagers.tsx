@@ -1,7 +1,7 @@
 import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import type { Group } from 'three';
-import { villagerAt, VILLAGERS, type Villager } from '../../../lib/scenes/voxel/villagers.js';
+import { villagerAt, VILLAGERS, type Villager } from '../../../lib/scenes/blocks/villagers.js';
 
 const SKIN = '#c79a72';
 

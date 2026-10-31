@@ -10,7 +10,7 @@ import {
   type Material,
 } from 'three';
 import { SIGHT_TUNNEL } from '../../../lib/island/sight-line.js';
-import { TILES, type Tile } from '../../../lib/scenes/voxel/blocks.js';
+import { TILES, type Tile } from '../../../lib/scenes/blocks/blocks.js';
 import { TILE_SIZE, tilePixels } from '../../../lib/textures/block-tiles.js';
 
 const textures = new Map<Tile, DataTexture>();

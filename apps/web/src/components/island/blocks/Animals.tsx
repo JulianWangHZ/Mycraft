@@ -1,8 +1,8 @@
 import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef, type ReactNode } from 'react';
 import { Vector3, type Group } from 'three';
-import { grazeTarget, placeAnimals, VILLAGE_HERDS, type Animal, type AnimalKind, type Herd } from '../../../lib/scenes/voxel/animals.js';
-import { groundAt, type World } from '../../../lib/scenes/voxel/world.js';
+import { grazeTarget, placeAnimals, VILLAGE_HERDS, type Animal, type AnimalKind, type Herd } from '../../../lib/scenes/blocks/animals.js';
+import { groundAt, type World } from '../../../lib/scenes/blocks/world.js';
 
 const SPEED: Readonly<Record<AnimalKind, number>> = { sheep: 0.45, cow: 0.4, pig: 0.45, chicken: 0.5, wolf: 0.7, rabbit: 0.6, turtle: 0.15 };
 /** Rabbits hop rather than walk. */

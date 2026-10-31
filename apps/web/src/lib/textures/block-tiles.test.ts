@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { KINDS, TILES } from '../scenes/voxel/blocks.js';
+import { KINDS, TILES } from '../scenes/blocks/blocks.js';
 import { paintTile, TILE_SIZE, tilePixels } from './block-tiles.js';
 
 const alphas = (pixels: Uint8Array) => Array.from(pixels).filter((_, i) => i % 4 === 3);
-const plantTiles = new Set(Object.values(KINDS).filter((k) => k.shape === 'plant' || k.shape === 'glass').map((k) => k.top));
+const plantTiles = new Set<string>([...Object.values(KINDS).filter((k) => k.shape === 'plant' || k.shape === 'glass').map((k) => k.top), 'rail']);
 
 describe('block tiles', () => {
-  it.each(TILES)('paints %s, see-through only for plants and glass', (tile) => {
+  it.each(TILES)('paints %s, see-through only for plants, glass and rails', (tile) => {
     const pixels = tilePixels(tile);
     expect(pixels.length).toBe(TILE_SIZE * TILE_SIZE * 4);
     const clear = alphas(pixels).filter((a) => a === 0).length;

@@ -3,7 +3,7 @@ import { useMemo, useRef } from 'react';
 import { Vector3, type Group, type PerspectiveCamera } from 'three';
 import { skySpot } from '../../../lib/island/sky-spot.js';
 import { seeded } from '../../../lib/scenes/skyline.js';
-import { topAt, type World } from '../../../lib/scenes/voxel/world.js';
+import { topAt, type World } from '../../../lib/scenes/blocks/world.js';
 
 type Time = 'day' | 'night';
 

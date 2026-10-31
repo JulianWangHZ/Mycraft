@@ -1,4 +1,4 @@
-import { villageWorld } from '../../../lib/scenes/voxel/village.js';
+import { villageWorld } from '../../../lib/scenes/blocks/village-world.js';
 import { Animals } from './Animals.js';
 import { BlockSky } from './BlockSky.js';
 import { BlockTerrain } from './BlockTerrain.js';

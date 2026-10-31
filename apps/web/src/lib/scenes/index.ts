@@ -1,10 +1,10 @@
 import { office } from './office.js';
 import { park } from './park.js';
 import { pool } from './pool.js';
-import { voxel } from './voxel.js';
+import { village } from './village.js';
 import { SCENE_IDS, type Activity, type SceneDefinition, type SceneId, type Spot, type Vec3 } from './types.js';
 
-export const SCENES: Readonly<Record<SceneId, SceneDefinition>> = { office, park, pool, voxel };
+export const SCENES: Readonly<Record<SceneId, SceneDefinition>> = { office, park, pool, village };
 
 export function sceneFor(id: string): SceneDefinition {
   return (SCENE_IDS as readonly string[]).includes(id) ? SCENES[id as SceneId] : office;

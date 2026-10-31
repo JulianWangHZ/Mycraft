@@ -1,5 +1,5 @@
 import { hash } from '../../textures/relief.js';
-import { voxel } from '../voxel.js';
+import { village } from '../village.js';
 import { BLOCKS, type BlockId } from './blocks.js';
 import { BLOCK, CAMPFIRE, DOCK, FARM, FLAT, HOUSE_SIZE, HOUSES, houseRect, inRect, LAMPS, PATH_WIDTH, PATHS, segmentDistance, WELL, WORKSHOP_FLOOR, WORKSHOP_YARD } from './layout.js';
 import { blockAt, buildWorld, columnAt, columnX, columnZ, put, type Site, type World } from './world.js';
@@ -19,7 +19,7 @@ const KEEP_CLEAR = 1.9;
 
 function villageClear(x: number, z: number): boolean {
   if (villageTop(x, z) !== null || inRect(x, z, WORKSHOP_YARD) || HOUSES.some((h) => inRect(x, z, houseRect(h), 0.5))) return false;
-  return Object.values(voxel.activities).every(([ax, , az]) => Math.hypot(x - ax, z - az) > KEEP_CLEAR) && !LAMPS.some(([lx, , lz]) => Math.hypot(x - lx, z - lz) < 0.6);
+  return Object.values(village.activities).every(([ax, , az]) => Math.hypot(x - ax, z - az) > KEEP_CLEAR) && !LAMPS.some(([lx, , lz]) => Math.hypot(x - lx, z - lz) < 0.6);
 }
 
 /** Ripe wheat in every farm row but the middle one, which carries water down the field. */

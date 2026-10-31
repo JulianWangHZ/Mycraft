@@ -5,7 +5,7 @@ import { LEVEL } from '../../lib/scenes/street.js';
 import { ParkingLot } from './city/ParkingLot.js';
 import { Street } from './city/Street.js';
 import { ResortSky } from './pool/ResortGrounds.js';
-import { VillageSky } from './voxel/VillageGrounds.js';
+import { VillageSky } from './blocks/VillageGrounds.js';
 import { facade, nightFacade } from './textures.js';
 
 const STREET = -60;
@@ -119,14 +119,14 @@ function Countryside({ time }: { time: Time }) {
   );
 }
 
-const BACKDROPS: Record<SceneId, (props: { time: Time }) => ReactNode> = { office: City, park: Countryside, pool: ResortSky, voxel: VillageSky };
+const BACKDROPS: Record<SceneId, (props: { time: Time }) => ReactNode> = { office: City, park: Countryside, pool: ResortSky, village: VillageSky };
 
 /** Sky gradient (top, horizon) for each scene at each time of day. */
 export const SKIES: Record<SceneId, Record<Time, [string, string]>> = {
   office: { day: ['#6fb1ec', '#e4eefb'], night: ['#120d2b', '#4a3470'] },
   park: { day: ['#9ccdf2', '#fdeedd'], night: ['#0f1530', '#3b3a6b'] },
   pool: { day: ['#6fa8ff', '#cfe6fc'], night: ['#0a0d24', '#2a2f5c'] },
-  voxel: { day: ['#79a8ff', '#c9defc'], night: ['#0a0d24', '#2a2f5c'] },
+  village: { day: ['#79a8ff', '#c9defc'], night: ['#0a0d24', '#2a2f5c'] },
 };
 
 export function Backdrop({ scene, time }: { scene: SceneId; time: Time }) {

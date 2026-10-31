@@ -4,7 +4,7 @@ import { OfficeDecor } from './office/OfficeDecor.js';
 import { OfficeShell } from './office/OfficeShell.js';
 import { ParkGrounds } from './park/ParkGrounds.js';
 import { ResortGrounds } from './pool/ResortGrounds.js';
-import { VillageGrounds } from './voxel/VillageGrounds.js';
+import { VillageGrounds } from './blocks/VillageGrounds.js';
 
 interface EnvironmentProps {
   scene: SceneDefinition;
@@ -26,7 +26,7 @@ const ENVIRONMENTS: Record<SceneId, (props: EnvironmentProps) => ReactNode> = {
   office: OfficeTower,
   park: ParkGrounds,
   pool: ResortGrounds,
-  voxel: VillageGrounds,
+  village: VillageGrounds,
 };
 
 export function Environment(props: EnvironmentProps) {

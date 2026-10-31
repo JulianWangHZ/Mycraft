@@ -1,8 +1,8 @@
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
 import { BufferAttribute, BufferGeometry, type Material, type Vector3 } from 'three';
-import { buildMeshes, type MeshData, type WorldMeshes } from '../../../lib/scenes/voxel/mesh.js';
-import type { World } from '../../../lib/scenes/voxel/world.js';
+import { buildMeshes, type MeshData, type WorldMeshes } from '../../../lib/scenes/blocks/mesh.js';
+import type { World } from '../../../lib/scenes/blocks/world.js';
 import { plantMaterials, sightUniforms, terrainMaterials, waterMaterials, waterTexture } from './materials.js';
 
 const meshCache = new WeakMap<World, WorldMeshes>();

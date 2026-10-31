@@ -1,8 +1,8 @@
 import { BAR, barStool, CABANA, HOT_TUB, hotTubSeat, LAP_POOL, laneSpot, LOUNGERS, loungerSpot } from './pool-layout.js';
 import { RIDE_SEATS, SIT_DROP } from './rides.js';
 import type { SceneDefinition, Spot, Vec3 } from './types.js';
-import { resortWorld } from './voxel/resort.js';
-import { topAt } from './voxel/world.js';
+import { resortWorld } from './blocks/resort.js';
+import { topAt } from './blocks/world.js';
 
 /** A seat relative to its activity centre: the seat surface height minus how far a sitter drops into it. */
 const sit = ([x, y, z]: Vec3, surface: number, facing: number): Spot => ({ position: [x, surface - SIT_DROP + y, z], facing, seated: true });

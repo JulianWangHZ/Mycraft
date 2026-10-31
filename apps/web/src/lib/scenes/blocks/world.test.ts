@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { voxel } from '../voxel.js';
+import { village } from '../village.js';
 import { BIOMES } from './biomes.js';
 import { BLOCKS, isOpaque } from './blocks.js';
 import { resortWorld } from './resort.js';
 import { BLOCK, DOCK, HOUSE_SIZE, HOUSES, SEA_LEVEL, WORLD, workSpot } from './layout.js';
-import { VILLAGE, villageWorld } from './village.js';
+import { VILLAGE, villageWorld } from './village-world.js';
 import { blockAt, buildWorld, columnAt, columnsIn, columnX, columnZ, groundAt, topAt } from './world.js';
 
 const world = villageWorld();
@@ -40,7 +40,7 @@ describe('village world', () => {
   });
 
   it('keeps every workbench and activity on flat ground at height 0', () => {
-    const spots = [...Array.from({ length: 36 }, (_, i) => workSpot(i)), ...Object.values(voxel.activities)];
+    const spots = [...Array.from({ length: 36 }, (_, i) => workSpot(i)), ...Object.values(village.activities)];
     for (const [x, , z] of spots) {
       if (Math.abs(x - DOCK.x) < 1 && z > DOCK.z1) continue;
       expect(surfaceAt(x, z)).toBe(0);
@@ -48,7 +48,7 @@ describe('village world', () => {
   });
 
   it('leaves the space above workbenches and activities open', () => {
-    for (const [x, , z] of [...Array.from({ length: 36 }, (_, i) => workSpot(i)), ...Object.values(voxel.activities)]) {
+    for (const [x, , z] of [...Array.from({ length: 36 }, (_, i) => workSpot(i)), ...Object.values(village.activities)]) {
       const [i, k] = column(x, z);
       for (let level = 2; level < 6; level += 1) expect(blockAt(world, i, level, k)).toBe(BLOCKS.air);
     }

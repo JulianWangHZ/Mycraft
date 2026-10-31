@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { benchSpot, flatDistance, inRect, segmentDistance, WELL, workSpot } from './layout.js';
 
-describe('voxel layout', () => {
+describe('village layout', () => {
   it('gives every workbench its own spot, in rows running back', () => {
     const spots = Array.from({ length: 40 }, (_, i) => workSpot(i).join());
     expect(new Set(spots).size).toBe(40);

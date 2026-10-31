@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import type { Mesh } from 'three';
 import { BAR, barStool, CABANA, HOT_TUB, LIFEGUARD, LOUNGERS } from '../../../lib/scenes/pool-layout.js';
 import type { Vec3 } from '../../../lib/scenes/types.js';
-import { Cube, Flames, Notes, Post } from '../voxel/parts.js';
+import { Cube, Flames, Notes, Post } from '../blocks/parts.js';
 
 /** Torch on a pole: a fence post topped with a flame, lit after dark. */
 function Torch({ at, night }: { at: Vec3; night: boolean }) {
@@ -62,7 +62,7 @@ export function GrillStation({ night }: { night: boolean }) {
       <group position={[-0.5, 0.9, 0]} scale={0.7}>
         <Flames />
       </group>
-      <Cube at={[0.45, 0, 0]} size={[0.9, 0.9, 0.55]} top="craftingTop" side="craftingSide" />
+      <Cube at={[0.45, 0, 0]} size={[0.9, 0.9, 0.55]} top="workbenchTop" side="workbenchSide" />
       <pointLight position={[-0.5, 1.2, 0.2]} color="#ff8a3d" intensity={night ? 3 : 1} distance={3} decay={1.6} />
     </group>
   );

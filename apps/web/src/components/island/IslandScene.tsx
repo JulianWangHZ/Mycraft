@@ -7,7 +7,7 @@ import type { Placement, SeatIndex } from '../../lib/island/behavior.js';
 import { internSpot, spotAtActivity } from '../../lib/scenes/index.js';
 import { modelUrl, type SceneManifest } from '../../lib/scenes/manifest.js';
 import { DESKS_PER_ROOM } from '../../lib/scenes/office.js';
-import { WORKSHOP } from '../../lib/scenes/voxel/layout.js';
+import { WORKSHOP } from '../../lib/scenes/blocks/layout.js';
 import { ACTIVITIES, type SceneDefinition, type Spot, type Vec3 } from '../../lib/scenes/types.js';
 import { ActivityProps } from './ActivityProps.js';
 import { Backdrop, SKIES } from './Backdrops.js';
@@ -21,7 +21,7 @@ import { OfficeLabels } from './office/OfficeLabels.js';
 import { PulseRing } from './PulseRing.js';
 import { skyTexture } from './textures.js';
 import { useSettingsStore } from '../../lib/settings.js';
-import { CraftingTable } from './voxel/VillageProps.js';
+import { Workbench } from './blocks/VillageProps.js';
 
 interface SceneProps {
   scene: SceneDefinition;
@@ -88,7 +88,7 @@ function Benches({ scene, seats }: Omit<SceneProps, 'manifest' | 'reducedMotion'
   return (
     <>
       {Array.from({ length: Math.max(BENCH_ROWS * WORKSHOP.columns, used) }, (_, index) => (
-        <CraftingTable key={index} spot={scene.seatAt(index, 'claude', index)} />
+        <Workbench key={index} spot={scene.seatAt(index, 'claude', index)} />
       ))}
     </>
   );
@@ -97,7 +97,7 @@ function Benches({ scene, seats }: Omit<SceneProps, 'manifest' | 'reducedMotion'
 function Workstations(props: Omit<SceneProps, 'manifest' | 'reducedMotion' | 'htmlPortal'>) {
   const { scene, sessions, seats } = props;
   if (scene.id === 'office') return <OfficeDesks {...props} />;
-  if (scene.id === 'voxel') return <Benches {...props} />;
+  if (scene.id === 'village') return <Benches {...props} />;
   if (scene.id !== 'park') return null;
   return (
     <>
