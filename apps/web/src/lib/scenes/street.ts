@@ -93,7 +93,7 @@ export const TRAFFIC: readonly TrafficCar[] = [
 ];
 
 /** Position of a car along the street at a given time, wrapping round at either end. */
-export function trafficX(car: TrafficCar, seconds: number, length = STREET.length): number {
+export function trafficX(car: TrafficCar, seconds: number, length: number = STREET.length): number {
   const direction = LANES[car.lane].direction;
   const travelled = car.phase * length + car.speed * seconds;
   const along = ((travelled % length) + length) % length;

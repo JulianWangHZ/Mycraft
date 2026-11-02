@@ -8,8 +8,8 @@ describe('readSavedScene', () => {
     expect(readSavedScene(storage('pool'))).toBe('pool');
   });
 
-  it.each([null, 'moon'])('falls back to the office for %s', (value) => {
-    expect(readSavedScene(storage(value))).toBe('office');
+  it.each([null, 'moon'])('falls back to the village for %s', (value) => {
+    expect(readSavedScene(storage(value))).toBe('village');
   });
 });
 

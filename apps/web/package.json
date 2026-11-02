@@ -1,5 +1,5 @@
 {
-  "name": "@unpaidinterns/web",
+  "name": "@mycraft/web",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,7 +13,7 @@
     "@lobehub/icons-static-svg": "^1.101.0",
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.2",
-    "@unpaidinterns/core": "workspace:*",
+    "@mycraft/core": "workspace:*",
     "i18next": "^25.10.10",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

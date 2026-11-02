@@ -1,4 +1,4 @@
-import type { Session } from '@unpaidinterns/core';
+import type { Session } from '@mycraft/core';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BUILDING, FLOOR_HEIGHT, FLOOR_TAG, ROOMS, type Room, type RoomId } from '../../../lib/scenes/office.js';
@@ -77,8 +77,8 @@ function FloorLabel({ room, sessions }: { room: Room; sessions: Session[] }) {
     `${parts.join('|')}:${i18n.language}`,
   );
   return (
-    // Stands clear of the slab face so nothing behind it can show through.
-    <mesh position={[room.left + FLOOR_TAG.inset + FLOOR_TAG.width / 2, room.floor * FLOOR_HEIGHT + FLOOR_TAG.y, BUILDING.front + 0.06]} renderOrder={2}>
+    // Clear of the slab's wool trim, whose face sits at BUILDING.front + 0.06: any closer and the two flicker as they fight for the same depth.
+    <mesh position={[room.left + FLOOR_TAG.inset + FLOOR_TAG.width / 2, room.floor * FLOOR_HEIGHT + FLOOR_TAG.y, BUILDING.front + 0.12]} renderOrder={2}>
       <planeGeometry args={[FLOOR_TAG.width, FLOOR_TAG.height]} />
       <meshBasicMaterial map={texture} transparent toneMapped={false} />
     </mesh>

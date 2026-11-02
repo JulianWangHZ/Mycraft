@@ -1,9 +1,18 @@
+import { cityWorld } from './blocks/city.js';
+import { topAt } from './blocks/world.js';
 import { office } from './office.js';
 import { park } from './park.js';
 import { pool } from './pool.js';
+import { village } from './village.js';
 import { SCENE_IDS, type Activity, type SceneDefinition, type SceneId, type Spot, type Vec3 } from './types.js';
 
-export const SCENES: Readonly<Record<SceneId, SceneDefinition>> = { office, park, pool };
+/**
+ * The city is laid out round the office tower, so the office cannot read its own terrain without
+ * a circular import; it is joined to it here instead.
+ */
+const officeInCity: SceneDefinition = { ...office, terrainAt: (x, z) => topAt(cityWorld(), x, z) };
+
+export const SCENES: Readonly<Record<SceneId, SceneDefinition>> = { office: officeInCity, park, pool, village };
 
 export function sceneFor(id: string): SceneDefinition {
   return (SCENE_IDS as readonly string[]).includes(id) ? SCENES[id as SceneId] : office;

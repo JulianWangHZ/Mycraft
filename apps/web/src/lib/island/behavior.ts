@@ -1,4 +1,4 @@
-import { stateGroup, type Session, type SessionState } from '@unpaidinterns/core';
+import { stateGroup, type Session, type SessionState } from '@mycraft/core';
 import type { Activity } from '../scenes/types.js';
 
 export type Pose = 'think' | 'type' | 'typeSlow' | 'wave' | 'slump' | 'sip' | 'sing' | 'play' | 'lounge' | 'workout' | 'nap' | 'swim';

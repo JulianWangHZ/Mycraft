@@ -1,4 +1,4 @@
-import type { AgentEvent, ServerMessage } from '@unpaidinterns/core';
+import type { AgentEvent, ServerMessage } from '@mycraft/core';
 import { describe, expect, it } from 'vitest';
 import { SessionHub } from '../src/session-hub.js';
 

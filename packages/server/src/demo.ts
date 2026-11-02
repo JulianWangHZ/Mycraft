@@ -1,4 +1,4 @@
-import { projectName, type AgentEvent } from '@unpaidinterns/core';
+import { projectName, type AgentEvent } from '@mycraft/core';
 import type { SessionHub } from './session-hub.js';
 
 type DemoIdentity = Pick<AgentEvent, 'agent' | 'sessionId' | 'cwd' | 'parentSessionId' | 'worktree' | 'title' | 'prompt' | 'model'> & {

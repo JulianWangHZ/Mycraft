@@ -1,7 +1,7 @@
 import { appendFile, mkdir, mkdtemp, rm, utimes, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { AgentEvent } from '@unpaidinterns/core';
+import type { AgentEvent } from '@mycraft/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { startCollector, type Collector, type ParseIssue, type ParserFactory } from '../src/index.js';
 

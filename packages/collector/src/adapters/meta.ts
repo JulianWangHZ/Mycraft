@@ -1,4 +1,4 @@
-import type { AgentEvent } from '@unpaidinterns/core';
+import type { AgentEvent } from '@mycraft/core';
 
 export const PROMPT_MAX = 240;
 

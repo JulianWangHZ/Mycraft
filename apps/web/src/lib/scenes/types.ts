@@ -1,4 +1,4 @@
-import type { AgentKind, StateGroup } from '@unpaidinterns/core';
+import type { AgentKind, StateGroup } from '@mycraft/core';
 import type { Pose } from '../island/behavior.js';
 import type { RideId } from './rides.js';
 
@@ -37,7 +37,7 @@ export interface Outfit {
   extra: Extra;
 }
 
-export const SCENE_IDS = ['office', 'park', 'pool'] as const;
+export const SCENE_IDS = ['village', 'park', 'pool', 'office'] as const;
 export type SceneId = (typeof SCENE_IDS)[number];
 
 export interface SceneDefinition {
@@ -68,6 +68,17 @@ export interface SceneDefinition {
   characterScale: number;
   /** Show a name tag over every agent, not only the ones that need attention. */
   nameTags: boolean;
+  /** Characters drawn as blocks with pixel faces, instead of the rounded figure. */
+  figure?: 'blocky';
+  /**
+   * Height of the terrain under a point. Scenes with hills set it so the camera always keeps a
+   * clear line of sight over them and never sinks into the ground.
+   */
+  terrainAt?(x: number, z: number): number;
+  /** Fog start and end distance, for scenes whose ground runs out at the horizon. */
+  fog?: readonly [number, number];
+  /** How far the camera may pull back from its target. */
+  maxDistance?: number;
   cameraTarget: Vec3;
   cameraOffset: Vec3;
   /** Camera offset from an agent when it is selected. */

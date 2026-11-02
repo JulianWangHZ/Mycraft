@@ -1,5 +1,5 @@
 {
-  "name": "@unpaidinterns/server",
+  "name": "@mycraft/server",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,8 +8,8 @@
   "dependencies": {
     "@hono/node-server": "^1.19.17",
     "@hono/node-ws": "^1.3.1",
-    "@unpaidinterns/collector": "workspace:*",
-    "@unpaidinterns/core": "workspace:*",
+    "@mycraft/collector": "workspace:*",
+    "@mycraft/core": "workspace:*",
     "hono": "^4.13.14",
     "zod": "^3.25.76"
   },

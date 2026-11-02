@@ -7,7 +7,7 @@ export function Header() {
   const status = useSessionStore((state) => state.status);
   return (
     <header className="top">
-      <span className="brand">Unpaidinterns</span>
+      <span className="brand">Mycraft</span>
       {status === 'closed' ? (
         <span className="banner" role="status">
           {t('connection.reconnecting')}

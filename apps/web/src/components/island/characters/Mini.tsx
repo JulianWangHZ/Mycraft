@@ -27,7 +27,7 @@ export interface MiniProps {
   motion?: MutableRefObject<Motion>;
 }
 
-interface Rig {
+export interface Rig {
   root: Group;
   body: Group;
   head: Group;
@@ -45,7 +45,7 @@ function reset(rig: Rig) {
 }
 
 /** One frame of a pose. `t` is seconds; poses are short loops so a crowd never looks frozen. */
-function animate(rig: Rig, pose: Pose, t: number, seated: boolean, walking: boolean, astride = false) {
+export function animate(rig: Rig, pose: Pose, t: number, seated: boolean, walking: boolean, astride = false) {
   reset(rig);
   if (walking) {
     const swing = Math.sin(t * 11) * 0.7;

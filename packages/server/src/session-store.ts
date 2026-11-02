@@ -1,4 +1,4 @@
-import type { AgentEvent, Session } from '@unpaidinterns/core';
+import type { AgentEvent, Session } from '@mycraft/core';
 
 export type Snapshot = Readonly<Record<string, Session>>;
 

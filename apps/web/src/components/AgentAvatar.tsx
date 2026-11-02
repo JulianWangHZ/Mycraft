@@ -1,4 +1,4 @@
-import type { AgentKind } from '@unpaidinterns/core';
+import type { AgentKind } from '@mycraft/core';
 import { AGENT_NAMES } from '../lib/agents.js';
 
 export function AgentAvatar({ agent, size = 20 }: { agent: AgentKind; size?: number }) {

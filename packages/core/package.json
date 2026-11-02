@@ -1,5 +1,5 @@
 {
-  "name": "@unpaidinterns/core",
+  "name": "@mycraft/core",
   "private": true,
   "type": "module",
   "exports": {

@@ -1,4 +1,4 @@
-import type { AgentEvent } from '@unpaidinterns/core';
+import type { AgentEvent } from '@mycraft/core';
 import { describe, expect, it } from 'vitest';
 import { applyEvent, expireStale, type Snapshot } from '../src/session-store.js';
 

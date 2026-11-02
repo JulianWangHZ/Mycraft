@@ -1,10 +1,10 @@
 {
-  "name": "unpaidinterns",
-  "description": "The Unpaidinterns dashboard for Claude Code",
-  "owner": { "name": "Unpaidinterns" },
+  "name": "mycraft",
+  "description": "The Mycraft dashboard for Claude Code",
+  "owner": { "name": "Mycraft" },
   "plugins": [
     {
-      "name": "unpaidinterns",
+      "name": "mycraft",
       "source": "./plugin",
       "description": "Open a local 3D dashboard that shows every Claude Code and Codex session on your machine."
     }

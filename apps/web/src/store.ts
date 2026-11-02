@@ -1,4 +1,4 @@
-import type { ServerMessage, Session, Task, TaskPatch } from '@unpaidinterns/core';
+import type { ServerMessage, Session, Task, TaskPatch } from '@mycraft/core';
 import { create } from 'zustand';
 import type { ConnectionStatus } from './lib/socket.js';
 

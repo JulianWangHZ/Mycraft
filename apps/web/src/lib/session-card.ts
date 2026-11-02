@@ -1,4 +1,4 @@
-import { stateGroup, type Session } from '@unpaidinterns/core';
+import { stateGroup, type Session } from '@mycraft/core';
 import { formatDuration } from './duration.js';
 
 /** POSIX single quotes: nothing inside is expanded, so a folder or id cannot run anything when pasted. */

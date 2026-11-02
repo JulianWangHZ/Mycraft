@@ -1,4 +1,4 @@
-import type { AgentEvent, ServerMessage, Session } from '@unpaidinterns/core';
+import type { AgentEvent, ServerMessage, Session } from '@mycraft/core';
 import { applyEvent, expireStale, type Snapshot } from './session-store.js';
 
 type Listener = (message: ServerMessage) => void;

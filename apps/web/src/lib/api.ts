@@ -1,4 +1,4 @@
-import type { Task, TaskCreate, TaskPatch } from '@unpaidinterns/core';
+import type { Task, TaskCreate, TaskPatch } from '@mycraft/core';
 
 type Fetcher = (url: string, init?: RequestInit) => Promise<Response>;
 

@@ -1,4 +1,4 @@
-import { stateGroup, type Session, type Task } from '@unpaidinterns/core';
+import { stateGroup, type Session, type Task } from '@mycraft/core';
 import type { SessionMap } from '../store.js';
 
 export interface CardStatus {
