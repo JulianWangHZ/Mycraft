@@ -9,7 +9,7 @@ waving at you when it needs an answer, and wandering off to the coffee bar when 
 
 </div>
 
-https://github.com/user-attachments/assets/a8d79f16-73a2-42be-a0dd-44b5329741d4
+<video src="https://github.com/JulianWangHZ/Mycraft/raw/main/.github/assets/demo.mp4" controls width="100%"></video>
 
 ---
 
