@@ -1,4 +1,4 @@
-import { stateGroup, type Session } from '@unpaidinterns/core';
+import { stateGroup, type Session } from '@mycraft/core';
 
 export type Lane = 'needsYou' | 'working' | 'done';
 

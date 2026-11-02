@@ -1,4 +1,4 @@
-import { taskCreateSchema, taskPatchSchema, type ServerMessage } from '@unpaidinterns/core';
+import { taskCreateSchema, taskPatchSchema, type ServerMessage } from '@mycraft/core';
 import { Hono, type Context, type MiddlewareHandler } from 'hono';
 import type { ZodError, ZodType, ZodTypeDef } from 'zod';
 import type { TaskRepository } from './task-repository.js';

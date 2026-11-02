@@ -10,7 +10,7 @@
 *.key
 
 # Local data (tasks, session snapshots)
-.unpaidinterns/
+.mycraft/
 tasks.json
 tasks.json.bak
 

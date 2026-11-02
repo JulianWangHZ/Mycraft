@@ -1,7 +1,7 @@
 import type { Stats } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { watch, type FSWatcher } from 'chokidar';
-import type { AgentEvent } from '@unpaidinterns/core';
+import type { AgentEvent } from '@mycraft/core';
 import { createProjectResolver, type ProjectInfo } from './project.js';
 import { FileTailer } from './tailer.js';
 import type { LineParser, ParserFactory } from './types.js';

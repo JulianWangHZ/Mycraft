@@ -1,11 +1,11 @@
 {
-  "name": "unpaidinterns",
+  "name": "mycraft",
   "description": "Open a local 3D dashboard that shows every Claude Code and Codex session on your machine.",
   "author": {
-    "name": "Unpaidinterns"
+    "name": "Mycraft"
   },
-  "homepage": "https://github.com/JulianWangHZ/Unpaidinterns",
-  "repository": "https://github.com/JulianWangHZ/Unpaidinterns",
+  "homepage": "https://github.com/JulianWangHZ/Mycraft",
+  "repository": "https://github.com/JulianWangHZ/Mycraft",
   "license": "MIT",
   "keywords": [
     "dashboard",

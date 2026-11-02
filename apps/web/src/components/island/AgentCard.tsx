@@ -1,5 +1,5 @@
-import type { Session } from '@unpaidinterns/core';
-import { stateGroup } from '@unpaidinterns/core';
+import type { Session } from '@mycraft/core';
+import { stateGroup } from '@mycraft/core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AGENT_ICONS } from '../../lib/agent-icons.js';

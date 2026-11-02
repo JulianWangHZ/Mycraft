@@ -1,4 +1,4 @@
-import type { ServerMessage } from '@unpaidinterns/core';
+import type { ServerMessage } from '@mycraft/core';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';

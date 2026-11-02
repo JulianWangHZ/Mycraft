@@ -1,4 +1,4 @@
-import type { Session } from '@unpaidinterns/core';
+import type { Session } from '@mycraft/core';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { placeTip } from '../../lib/tip-position.js';
 import { useCompact } from '../compact.js';

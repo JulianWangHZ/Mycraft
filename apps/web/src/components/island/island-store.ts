@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { SCENE_IDS, type SceneId } from '../../lib/scenes/types.js';
 
-export const SCENE_STORAGE_KEY = 'unpaidinterns.scene';
+export const SCENE_STORAGE_KEY = 'mycraft.scene';
 
 export function readSavedScene(storage: Pick<Storage, 'getItem'>): SceneId {
   const saved = storage.getItem(SCENE_STORAGE_KEY);
-  return (SCENE_IDS as readonly string[]).includes(saved ?? '') ? (saved as SceneId) : 'office';
+  return (SCENE_IDS as readonly string[]).includes(saved ?? '') ? (saved as SceneId) : 'village';
 }
 
 interface IslandStore {
@@ -27,7 +27,7 @@ interface IslandStore {
 }
 
 export const useIslandStore = create<IslandStore>()((set) => ({
-  scene: 'office',
+  scene: 'village',
   selectedSession: null,
   hoveredSession: null,
   tipAt: null,

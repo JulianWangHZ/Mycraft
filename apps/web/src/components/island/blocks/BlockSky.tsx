@@ -4,6 +4,7 @@ import { Vector3, type Group, type PerspectiveCamera } from 'three';
 import { skySpot } from '../../../lib/island/sky-spot.js';
 import { seeded } from '../../../lib/scenes/skyline.js';
 import { topAt, type World } from '../../../lib/scenes/blocks/world.js';
+import { tileTexture } from './materials.js';
 
 type Time = 'day' | 'night';
 
@@ -37,7 +38,7 @@ function Clouds() {
           {parts.map(({ offset, size }, p) => (
             <mesh key={p} position={offset}>
               <boxGeometry args={size} />
-              <meshBasicMaterial color="#ffffff" transparent opacity={0.88} fog={false} />
+              <meshBasicMaterial map={tileTexture('woolWhite')} transparent opacity={0.92} fog={false} />
             </mesh>
           ))}
         </group>
@@ -82,13 +83,14 @@ function Disc({ night, world }: { night: boolean; world: World }) {
   });
   return (
     <group ref={group}>
+      {/* Pixelated, hard-edged like every other block face: no soft gradient, matches the world's style. */}
       <mesh>
         <planeGeometry args={[9, 9]} />
-        <meshBasicMaterial color={night ? '#e8ecf6' : '#fff4c2'} fog={false} toneMapped={false} />
+        <meshBasicMaterial map={tileTexture(night ? 'moonDisc' : 'sunDisc')} transparent alphaTest={0.5} fog={false} toneMapped={false} />
       </mesh>
       <mesh position={[0, 0, -0.1]}>
-        <planeGeometry args={[13, 13]} />
-        <meshBasicMaterial color={night ? '#8a96c8' : '#ffe58a'} transparent opacity={0.35} fog={false} />
+        <planeGeometry args={[12, 12]} />
+        <meshBasicMaterial map={tileTexture(night ? 'moonDisc' : 'sunDisc')} transparent alphaTest={0.5} opacity={0.3} fog={false} />
       </mesh>
     </group>
   );

@@ -1,4 +1,4 @@
-import type { Session } from '@unpaidinterns/core';
+import type { Session } from '@mycraft/core';
 import { describe, expect, it } from 'vitest';
 import { HIDDEN_AGENTS_KEY, loadHiddenAgents, saveHiddenAgents, useSettingsStore, visibleSessions } from './settings.js';
 

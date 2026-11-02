@@ -123,7 +123,7 @@ describe('village world', () => {
         for (let k = 0; k < w.depth; k += 1) {
           for (let i = 0; i < w.width; i += 1) {
             if (!trunks.has(blockAt(w, i, level, k))) continue;
-            // Held up from below, or joined face to face with the trunk beside it where a palm leans.
+            // Held up from below, or joined face to face with a trunk beside it.
             const below = blockAt(w, i, level - 1, k);
             const beside = [blockAt(w, i + 1, level, k), blockAt(w, i - 1, level, k)].some((id) => trunks.has(id));
             expect(isOpaque(below) || trunks.has(below) || beside).toBe(true);

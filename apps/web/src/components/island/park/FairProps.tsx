@@ -328,7 +328,7 @@ function drawGateSign(ctx: CanvasRenderingContext2D, width: number, height: numb
   ctx.font = '700 64px "IBM Plex Mono", ui-monospace, monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('UNPAIDINTERNS PARK', width / 2, height / 2 + 4);
+  ctx.fillText('MYCRAFT PARK', width / 2, height / 2 + 4);
 }
 
 /** Entrance arch: two stone brick towers with lantern tops and a wool sign across them. */

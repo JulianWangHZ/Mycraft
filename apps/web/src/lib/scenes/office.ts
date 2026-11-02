@@ -1,4 +1,4 @@
-import type { AgentKind } from '@unpaidinterns/core';
+import type { AgentKind } from '@mycraft/core';
 import type { SceneDefinition, Spot } from './types.js';
 
 export const FLOOR_HEIGHT = 3.4;
@@ -63,7 +63,8 @@ export const office: SceneDefinition = {
     gym: [2.1, 0, -0.75],
     ballpit: [3.4, 0, 0.3],
     sofa: [0, 0, -0.2],
-    nap: [7.3, 0, -0.9],
+    // Clear of the stair, which reaches back to z -2.025 at this x: any closer and the near armchair sinks into the steps.
+    nap: [7.3, 0, -0.3],
   },
   activityRadius: { pingpong: 1.2, coffee: 0.8, ballpit: 1.15, gym: 0.45 },
   activityPose: { gym: 'type' },
@@ -93,6 +94,9 @@ export const office: SceneDefinition = {
   },
   characterScale: 1.3,
   nameTags: true,
+  figure: 'blocky',
+  fog: [60, 140],
+  maxDistance: 60,
   cameraTarget: [0, 6.4, 0],
   cameraOffset: [0, 9, 47],
   closeOffset: [0, 1.6, 7.5],

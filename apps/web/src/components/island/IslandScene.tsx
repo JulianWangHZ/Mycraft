@@ -1,5 +1,5 @@
-import type { AgentKind, Session } from '@unpaidinterns/core';
-import { stateGroup } from '@unpaidinterns/core';
+import type { AgentKind, Session } from '@mycraft/core';
+import { stateGroup } from '@mycraft/core';
 import { ContactShadows } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { useMemo, type RefObject } from 'react';
@@ -13,7 +13,7 @@ import { ActivityProps } from './ActivityProps.js';
 import { Backdrop, SKIES } from './Backdrops.js';
 import { CameraRig } from './CameraRig.js';
 import { Character } from './Character.js';
-import { Desk } from './Desk.js';
+import { BlockDesk } from './office/BlockOffice.js';
 import { BlockBooth } from './park/FairProps.js';
 import { Environment } from './Environments.js';
 import { FitToWindow } from './FitToWindow.js';
@@ -75,7 +75,7 @@ function OfficeDesks({ scene, sessions, placements, seats }: Omit<SceneProps, 'm
           const session = byKindIndex.get(`${agent}:${agentIndex}`);
           const atDesk = session && placements.get(session.sessionId)?.at.kind === 'desk';
           return (
-            <Desk key={`${agent}-${agentIndex}`} spot={scene.seatAt(0, agent, agentIndex)} state={atDesk ? session.state : undefined} />
+            <BlockDesk key={`${agent}-${agentIndex}`} spot={scene.seatAt(0, agent, agentIndex)} state={atDesk ? session.state : undefined} />
           );
         });
       })}
@@ -119,14 +119,15 @@ function Lights({ night }: { night: boolean }) {
   return night ? (
     <>
       <hemisphereLight args={['#9a90d8', '#2a2445', 0.9]} />
-      <directionalLight position={[4, 14, 18]} intensity={0.55} color="#c9c3ff" castShadow shadow-mapSize={[2048, 2048]} shadow-bias={-0.0005}>
+      {/* normalBias pushes the sample off the surface along its normal, the fix for acne on thin verticals that shadow-bias alone can't reach without reintroducing peter-panning. */}
+      <directionalLight position={[4, 14, 18]} intensity={0.55} color="#c9c3ff" castShadow shadow-mapSize={[2048, 2048]} shadow-bias={-0.0005} shadow-normalBias={0.03}>
         <orthographicCamera attach="shadow-camera" args={[-14, 14, 14, -14, 1, 60]} />
       </directionalLight>
     </>
   ) : (
     <>
       <hemisphereLight args={['#ffffff', '#c3c9ee', 1.6]} />
-      <directionalLight position={[6, 14, 8]} intensity={1.3} castShadow shadow-mapSize={[2048, 2048]} shadow-bias={-0.0005}>
+      <directionalLight position={[6, 14, 8]} intensity={1.3} castShadow shadow-mapSize={[2048, 2048]} shadow-bias={-0.0005} shadow-normalBias={0.03}>
         <orthographicCamera attach="shadow-camera" args={[-14, 14, 14, -14, 1, 45]} />
       </directionalLight>
     </>
@@ -145,7 +146,10 @@ export function IslandScene({ scene, manifest, sessions, placements, seats, redu
     <Canvas
       flat
       shadows="percentage"
-      camera={{ position: [0, 7, 33], fov: 26, far: 700 }}
+      // The camera is fixed and never zooms in, so it can afford a far near plane: the default 0.1
+      // stretches the depth buffer's precision over a 7000:1 near/far ratio, which is too coarse a
+      // hundred-plus units out and makes the far backdrop towers' own faces flicker (z-fighting).
+      camera={{ position: [0, 7, 33], fov: 26, near: 1, far: 700 }}
       dpr={[1, 2]}
       frameloop={active ? 'always' : 'never'}
       onPointerMissed={() => useIslandStore.getState().select(null)}

@@ -1,5 +1,5 @@
-import type { AgentKind, Session, Task } from '@unpaidinterns/core';
-import { stateGroup } from '@unpaidinterns/core';
+import type { AgentKind, Session, Task } from '@mycraft/core';
+import { stateGroup } from '@mycraft/core';
 
 export interface BoardStats {
   inProgress: number;

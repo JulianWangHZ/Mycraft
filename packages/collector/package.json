@@ -1,12 +1,12 @@
 {
-  "name": "@unpaidinterns/collector",
+  "name": "@mycraft/collector",
   "private": true,
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@unpaidinterns/core": "workspace:*",
+    "@mycraft/core": "workspace:*",
     "chokidar": "^4.0.3"
   }
 }

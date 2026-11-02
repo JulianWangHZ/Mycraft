@@ -1,5 +1,5 @@
 import { basename } from 'node:path';
-import { projectName, type AgentEvent, type SessionState } from '@unpaidinterns/core';
+import { projectName, type AgentEvent, type SessionState } from '@mycraft/core';
 import type { ParseResult, ParserFactory } from '../types.js';
 import { personPrompt, withMeta, type SessionMeta } from './meta.js';
 import { DETAIL_MAX, toolLabel, truncate } from './text.js';

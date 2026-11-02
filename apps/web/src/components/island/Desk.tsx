@@ -1,4 +1,4 @@
-import type { SessionState } from '@unpaidinterns/core';
+import type { SessionState } from '@mycraft/core';
 import type { Spot } from '../../lib/scenes/types.js';
 import { Workstation } from './furniture/Workstation.js';
 

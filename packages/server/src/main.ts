@@ -6,7 +6,7 @@ import { parseArgs } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
-import { createClaudeParser, createCodexParser, startCollector, type SourceConfig } from '@unpaidinterns/collector';
+import { createClaudeParser, createCodexParser, startCollector, type SourceConfig } from '@mycraft/collector';
 import { createApp } from './app.js';
 import { startDemo } from './demo.js';
 import { SessionHub } from './session-hub.js';
@@ -35,11 +35,11 @@ function main(): void {
     options: { port: { type: 'string', default: '4777' }, demo: { type: 'boolean', default: false } },
   });
   const port = readPort(values.port);
-  const linkToken = process.env.UNPAIDINTERNS_TOKEN ?? randomBytes(24).toString('base64url');
+  const linkToken = process.env.MYCRAFT_TOKEN ?? randomBytes(24).toString('base64url');
   const sessionSecret = randomBytes(32).toString('base64url');
 
   const hub = new SessionHub();
-  const dataDir = process.env.UNPAIDINTERNS_DATA_DIR ?? join(homedir(), '.unpaidinterns');
+  const dataDir = process.env.MYCRAFT_DATA_DIR ?? join(homedir(), '.mycraft');
   const tasks = new JsonTaskRepository(join(dataDir, 'tasks.json'), {
     onCorrupt: (backup) => console.warn(`tasks.json was unreadable. It was moved to ${backup} and a new list was started.`),
   });
@@ -72,7 +72,7 @@ function main(): void {
   setInterval(() => hub.sweep(Date.now(), IDLE_MS), SWEEP_MS).unref();
 
   const origin = process.env.UI_URL ?? `http://127.0.0.1:${port}`;
-  console.log(`Unpaidinterns is running. Open this link once to sign in:\n${origin}/api/auth?token=${linkToken}`);
+  console.log(`Mycraft is running. Open this link once to sign in:\n${origin}/api/auth?token=${linkToken}`);
 }
 
 main();

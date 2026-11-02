@@ -1,4 +1,4 @@
-import type { Session, Task } from '@unpaidinterns/core';
+import type { Session, Task } from '@mycraft/core';
 import { describe, expect, it } from 'vitest';
 import { cardStatus } from './task-status.js';
 

@@ -1,4 +1,4 @@
-import type { Session } from '@unpaidinterns/core';
+import type { Session } from '@mycraft/core';
 import { projectLabel } from '../lib/labels.js';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,4 +1,4 @@
-import type { AgentKind, StateGroup } from '@unpaidinterns/core';
+import type { AgentKind, StateGroup } from '@mycraft/core';
 import type { Pose } from '../island/behavior.js';
 import type { RideId } from './rides.js';
 
@@ -37,7 +37,7 @@ export interface Outfit {
   extra: Extra;
 }
 
-export const SCENE_IDS = ['office', 'park', 'pool', 'village'] as const;
+export const SCENE_IDS = ['village', 'park', 'pool', 'office'] as const;
 export type SceneId = (typeof SCENE_IDS)[number];
 
 export interface SceneDefinition {

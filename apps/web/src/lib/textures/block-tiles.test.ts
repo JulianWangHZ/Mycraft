@@ -3,7 +3,8 @@ import { KINDS, TILES } from '../scenes/blocks/blocks.js';
 import { paintTile, TILE_SIZE, tilePixels } from './block-tiles.js';
 
 const alphas = (pixels: Uint8Array) => Array.from(pixels).filter((_, i) => i % 4 === 3);
-const plantTiles = new Set<string>([...Object.values(KINDS).filter((k) => k.shape === 'plant' || k.shape === 'glass').map((k) => k.top), 'rail']);
+// sunDisc and moonDisc have no block kind of their own: they're painted as a sky sprite, not a world block.
+const plantTiles = new Set<string>([...Object.values(KINDS).filter((k) => k.shape === 'plant' || k.shape === 'glass').map((k) => k.top), 'rail', 'sunDisc', 'moonDisc']);
 
 describe('block tiles', () => {
   it.each(TILES)('paints %s, see-through only for plants, glass and rails', (tile) => {

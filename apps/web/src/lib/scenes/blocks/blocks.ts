@@ -68,6 +68,14 @@ export const TILES = [
   'woolPurple',
   'woolGreen',
   'lantern',
+  'asphalt',
+  'roadLine',
+  'woolOrange',
+  'woolCyan',
+  'woolGrey',
+  'screen',
+  'facade',
+  'facadeLit',
   // Faces only used by the village props.
   'workbenchTop',
   'workbenchSide',
@@ -81,6 +89,8 @@ export const TILES = [
   'woolWhite',
   'pumpkin',
   'lamp',
+  'sunDisc',
+  'moonDisc',
 ] as const;
 export type Tile = (typeof TILES)[number];
 
@@ -148,6 +158,10 @@ export const BLOCKS = {
   terracotta: 44,
   glowPane: 45,
   stoneBricks: 46,
+  asphalt: 47,
+  roadLine: 48,
+  facade: 49,
+  ironBlock: 50,
 } as const;
 export type BlockName = keyof typeof BLOCKS;
 export type BlockId = (typeof BLOCKS)[BlockName];
@@ -200,6 +214,10 @@ export const KINDS: Readonly<Record<Exclude<BlockId, 0>, BlockKind>> = {
   [BLOCKS.terracotta]: cube('terracotta'),
   [BLOCKS.glowPane]: cube('glowPane'),
   [BLOCKS.stoneBricks]: cube('stoneBricks'),
+  [BLOCKS.asphalt]: cube('asphalt'),
+  [BLOCKS.roadLine]: cube('roadLine'),
+  [BLOCKS.facade]: cube('concreteWhite', 'facade'),
+  [BLOCKS.ironBlock]: cube('ironBlock'),
 };
 
 export function kindOf(id: number): BlockKind | null {

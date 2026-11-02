@@ -1,4 +1,4 @@
-import type { AgentKind } from '@unpaidinterns/core';
+import type { AgentKind } from '@mycraft/core';
 import { describe, expect, it } from 'vitest';
 
 const KINDS = ['claude', 'codex', 'gemini'];

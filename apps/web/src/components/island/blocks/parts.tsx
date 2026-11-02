@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber';
-import { useRef } from 'react';
-import type { Group } from 'three';
+import { useMemo, useRef } from 'react';
+import { BoxGeometry, type Group } from 'three';
 import type { Tile } from '../../../lib/scenes/blocks/blocks.js';
 import { BLOCK } from '../../../lib/scenes/blocks/layout.js';
 import type { Vec3 } from '../../../lib/scenes/types.js';
@@ -26,6 +26,45 @@ export function Cube({ at: [x, y, z], size = [BLOCK, BLOCK, BLOCK], top, side, b
     <mesh position={[x, y + size[1] / 2, z]} rotation={[0, turn, 0]} material={blockFaces(top, side, bottom, front, glow)} castShadow receiveShadow>
       <boxGeometry args={size} />
     </mesh>
+  );
+}
+
+/** Three.js's box face order: right, left, top, bottom, front, back, four vertices each. */
+function tileBoxUV(geometry: BoxGeometry, size: Vec3) {
+  const [width, height, depth] = size;
+  const repeats: Vec3[] = [
+    [depth, height, 0],
+    [depth, height, 0],
+    [width, depth, 0],
+    [width, depth, 0],
+    [width, height, 0],
+    [width, height, 0],
+  ];
+  const uv = geometry.attributes.uv;
+  if (!uv) return;
+  for (let face = 0; face < 6; face += 1) {
+    const [ru, rv] = repeats[face] as [number, number, number];
+    for (let v = 0; v < 4; v += 1) {
+      const i = face * 4 + v;
+      uv.setXY(i, uv.getX(i) * (ru / BLOCK), uv.getY(i) * (rv / BLOCK));
+    }
+  }
+  uv.needsUpdate = true;
+}
+
+/**
+ * A box dressed as a block, like `Cube`, but its texture repeats once per block along each face
+ * instead of stretching one tile over the whole thing — for a big slab to read as built from many
+ * blocks (a tower's facade) rather than a single tile smeared across it.
+ */
+export function TiledCube({ at: [x, y, z], size = [BLOCK, BLOCK, BLOCK], top, side, bottom, front, glow = false }: CubeProps) {
+  const geometry = useMemo(() => {
+    const box = new BoxGeometry(...size);
+    tileBoxUV(box, size);
+    return box;
+  }, [size[0], size[1], size[2]]);
+  return (
+    <mesh position={[x, y + size[1] / 2, z]} geometry={geometry} material={blockFaces(top, side, bottom, front, glow)} castShadow receiveShadow />
   );
 }
 

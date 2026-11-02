@@ -74,6 +74,14 @@ export function tileTexture(tile: Tile): DataTexture {
   texture.minFilter = LinearMipmapLinearFilter;
   texture.colorSpace = SRGBColorSpace;
   texture.generateMipmaps = true;
+  // Repeat, not clamp, so a mesh that stretches its UVs past 1 (a tall box tiled once per block)
+  // still reads as a tile pattern rather than one pixel's edge colour smeared over the gap.
+  texture.wrapS = RepeatWrapping;
+  texture.wrapT = RepeatWrapping;
+  // A tall thin pillar viewed end-on squashes its texture's V axis far more than its U axis: plain
+  // mipmapping blurs both equally and the pillar's two groove lines alias into a ladder of stripes.
+  // Three clamps this to the GPU's real max automatically, so a generous request is safe everywhere.
+  texture.anisotropy = 16;
   texture.needsUpdate = true;
   textures.set(tile, texture);
   return texture;
@@ -95,21 +103,28 @@ export function plantMaterials(): Material[] {
   return plants;
 }
 
-/** The water surface texture; it repeats so it can be scrolled to make the water flow. */
+/** The water surface texture, scrolled each frame to make the water flow. */
 export function waterTexture(): DataTexture {
-  const texture = tileTexture('water');
-  if (texture.wrapS !== RepeatWrapping) {
-    texture.wrapS = RepeatWrapping;
-    texture.wrapT = RepeatWrapping;
-    texture.needsUpdate = true;
-  }
-  return texture;
+  return tileTexture('water');
 }
 
 export function waterMaterials(): Material[] {
-  waterTexture();
   water ??= TILES.map((tile) => new MeshLambertMaterial({ map: tileTexture(tile), transparent: true, opacity: 0.78, depthWrite: false }));
   return water;
+}
+
+/**
+ * After dark, building windows in the terrain switch to their lit picture and glow, so the towers
+ * round a scene show lights in their windows.
+ */
+export function lightWindows(night: boolean) {
+  const facade = terrainMaterials()[TILES.indexOf('facade')] as MeshLambertMaterial;
+  const lit = tileTexture('facadeLit');
+  facade.map = night ? lit : tileTexture('facade');
+  facade.emissive.set(night ? '#ffffff' : '#000000');
+  facade.emissiveMap = night ? lit : null;
+  facade.emissiveIntensity = night ? 0.7 : 0;
+  facade.needsUpdate = true;
 }
 
 const faces = new Map<string, MeshLambertMaterial[]>();

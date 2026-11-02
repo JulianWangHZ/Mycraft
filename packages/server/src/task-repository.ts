@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { z } from 'zod';
-import { taskCreateSchema, taskSchema, type Task, type TaskCreate, type TaskPatch } from '@unpaidinterns/core';
+import { taskCreateSchema, taskSchema, type Task, type TaskCreate, type TaskPatch } from '@mycraft/core';
 
 export interface TaskRepository {
   list(): Promise<Task[]>;

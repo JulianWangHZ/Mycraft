@@ -1,6 +1,6 @@
 import { readFileSync, statSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join, resolve, sep } from 'node:path';
-import { projectName } from '@unpaidinterns/core';
+import { projectName } from '@mycraft/core';
 
 export interface ProjectInfo {
   project: string;

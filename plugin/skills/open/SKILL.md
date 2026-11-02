@@ -1,10 +1,10 @@
 ---
-description: Opens the Unpaidinterns dashboard, a local 3D view of every Claude Code and Codex session on this machine. Use when the user wants to see, open, start, stop or update Unpaidinterns, the intern dashboard, or a view of what their agents are doing.
+description: Opens the Mycraft dashboard, a local 3D view of every Claude Code and Codex session on this machine. Use when the user wants to see, open, start, stop or update Mycraft, the intern dashboard, or a view of what their agents are doing.
 argument-hint: "[start | demo | restart | stop | status | update]"
-allowed-tools: Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/unpaidinterns.sh":*)
+allowed-tools: Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/mycraft.sh":*)
 ---
 
-Run the Unpaidinterns launcher with the action the user asked for, and report what it printed.
+Run the Mycraft launcher with the action the user asked for, and report what it printed.
 
 Pick the action from the user's request, or from `$ARGUMENTS` when the skill is run as a command:
 
@@ -20,7 +20,7 @@ Pick the action from the user's request, or from `$ARGUMENTS` when the skill is 
 Run exactly this, with the action in place of `ACTION`:
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/unpaidinterns.sh" ACTION
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/mycraft.sh" ACTION
 ```
 
 The first start fetches and builds the app, which takes about a minute; tell the user that while it runs. The script opens the browser itself, so don't open URLs yourself.

@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import type { SceneDefinition, SceneId } from '../../lib/scenes/types.js';
-import { OfficeDecor } from './office/OfficeDecor.js';
-import { OfficeShell } from './office/OfficeShell.js';
+import { BlockCityGrounds } from './office/BlockCity.js';
 import { FairGrounds } from './park/FairGrounds.js';
 import { ResortGrounds } from './pool/ResortGrounds.js';
 import { VillageGrounds } from './blocks/VillageGrounds.js';
@@ -12,18 +11,8 @@ interface EnvironmentProps {
   time: 'day' | 'night';
 }
 
-/** The office is a cut-away tower: three floors, five rooms, seen from the open front. */
-function OfficeTower({ time }: EnvironmentProps) {
-  return (
-    <group>
-      <OfficeShell time={time} />
-      <OfficeDecor />
-    </group>
-  );
-}
-
 const ENVIRONMENTS: Record<SceneId, (props: EnvironmentProps) => ReactNode> = {
-  office: OfficeTower,
+  office: BlockCityGrounds,
   park: FairGrounds,
   pool: ResortGrounds,
   village: VillageGrounds,

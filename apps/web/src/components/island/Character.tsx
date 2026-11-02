@@ -1,7 +1,7 @@
-import type { Session } from '@unpaidinterns/core';
+import type { Session } from '@mycraft/core';
 import { AGENT_ICONS } from '../../lib/agent-icons.js';
 import { projectLabel, tagLabel } from '../../lib/labels.js';
-import { stateGroup } from '@unpaidinterns/core';
+import { stateGroup } from '@mycraft/core';
 import { Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { Suspense, useMemo, useRef, type RefObject } from 'react';

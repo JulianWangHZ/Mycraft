@@ -1,9 +1,9 @@
-import { agentKindSchema, type AgentKind, type Session } from '@unpaidinterns/core';
+import { agentKindSchema, type AgentKind, type Session } from '@mycraft/core';
 import { z } from 'zod';
 import { create } from 'zustand';
 import type { Theme } from './theme.js';
 
-export const HIDDEN_AGENTS_KEY = 'unpaidinterns.hiddenAgents';
+export const HIDDEN_AGENTS_KEY = 'mycraft.hiddenAgents';
 const hiddenSchema = z.array(agentKindSchema);
 
 type SessionMap = Readonly<Record<string, Session>>;

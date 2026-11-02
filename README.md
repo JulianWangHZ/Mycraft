@@ -1,6 +1,6 @@
 <div align="center">
 
-# Unpaidinterns
+# Mycraft
 
 **A tiny 3D world where your coding agents clock in.**
 
@@ -17,7 +17,7 @@ https://github.com/user-attachments/assets/a8d79f16-73a2-42be-a0dd-44b5329741d4
 
 Run three or four agents at once and the terminal tabs blur together. Which one finished? Which one has been sitting on a question for ten minutes?
 
-Unpaidinterns watches the session logs your agents already write and turns them into something you can read at a glance: who is working, who is waiting on you, and who is done. Leave it open on a second screen, or float it in a picture-in-picture window over your editor.
+Mycraft watches the session logs your agents already write and turns them into something you can read at a glance: who is working, who is waiting on you, and who is done. Leave it open on a second screen, or float it in a picture-in-picture window over your editor.
 
 ## What you get
 
@@ -63,28 +63,28 @@ You need **Node 22 or newer** and **pnpm 10**.
 ### As a Claude Code plugin
 
 ```sh
-claude plugin marketplace add JulianWangHZ/Unpaidinterns
-claude plugin install unpaidinterns@unpaidinterns
+claude plugin marketplace add JulianWangHZ/Mycraft
+claude plugin install mycraft@mycraft
 ```
 
-Then, in any Claude Code session, type `/unpaidinterns:open` or just ask Claude to *open the intern dashboard*. The first run fetches and builds the app (about a minute), starts it in the background and opens your browser, already signed in.
+Then, in any Claude Code session, type `/mycraft:open` or just ask Claude to *open the intern dashboard*. The first run fetches and builds the app (about a minute), starts it in the background and opens your browser, already signed in.
 
 The same command takes an action:
 
 | Command | What it does |
 |---|---|
-| `/unpaidinterns:open` | Start the dashboard and open it |
-| `/unpaidinterns:open demo` | Start it with made-up sessions |
-| `/unpaidinterns:open restart` | Restart, with a fresh sign-in link |
-| `/unpaidinterns:open stop` | Shut it down |
-| `/unpaidinterns:open status` | Is it running, and which version |
-| `/unpaidinterns:open update` | Pull the latest version and rebuild |
+| `/mycraft:open` | Start the dashboard and open it |
+| `/mycraft:open demo` | Start it with made-up sessions |
+| `/mycraft:open restart` | Restart, with a fresh sign-in link |
+| `/mycraft:open stop` | Shut it down |
+| `/mycraft:open status` | Is it running, and which version |
+| `/mycraft:open update` | Pull the latest version and rebuild |
 
 ### From source
 
 ```sh
-git clone https://github.com/JulianWangHZ/Unpaidinterns.git
-cd Unpaidinterns
+git clone https://github.com/JulianWangHZ/Mycraft.git
+cd Mycraft
 pnpm install
 pnpm build
 pnpm start
@@ -93,7 +93,7 @@ pnpm start
 The server prints a one-time link:
 
 ```
-Unpaidinterns is running. Open this link once to sign in:
+Mycraft is running. Open this link once to sign in:
 http://127.0.0.1:4777/api/auth?token=…
 ```
 
@@ -144,8 +144,8 @@ These environment variables change the defaults:
 
 | Variable | Default | What it does |
 |---|---|---|
-| `UNPAIDINTERNS_DATA_DIR` | `~/.unpaidinterns` | Where the app keeps its own data |
-| `UNPAIDINTERNS_TOKEN` | random | A fixed sign-in token, handy for scripts |
+| `MYCRAFT_DATA_DIR` | `~/.mycraft` | Where the app keeps its own data |
+| `MYCRAFT_TOKEN` | random | A fixed sign-in token, handy for scripts |
 
 Pick another port with `pnpm start --port 5000`.
 
@@ -159,7 +159,7 @@ Pick another port with `pnpm start --port 5000`.
 
 ## Troubleshooting
 
-**"This link is invalid or was already used."** Each link works once. Restart with `pnpm start` to get a new one, or set `UNPAIDINTERNS_TOKEN` to keep the same link.
+**"This link is invalid or was already used."** Each link works once. Restart with `pnpm start` to get a new one, or set `MYCRAFT_TOKEN` to keep the same link.
 
 **The office is empty.** Only sessions active in the last 30 minutes appear. Send your agent a message and it walks in within a few seconds. If the server says `Claude Code: not installed`, it couldn't find `~/.claude/projects`.
 

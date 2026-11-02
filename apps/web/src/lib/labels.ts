@@ -1,4 +1,4 @@
-import type { Session } from '@unpaidinterns/core';
+import type { Session } from '@mycraft/core';
 
 /** Project name as shown to people; worktree sessions read as `project · worktree`. */
 export function projectLabel(session: Pick<Session, 'project' | 'worktree'>): string {

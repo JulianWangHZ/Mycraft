@@ -289,6 +289,17 @@ const PAINTERS: Readonly<Record<Tile, Painter>> = {
   woolPink: speckle('#ef8fb3', 95, 0.12),
   woolPurple: speckle('#8a4fc2', 96, 0.12),
   woolGreen: speckle('#5aa83a', 97, 0.12),
+  asphalt: (x, y) => shade(rgb('#3d3f45'), 0.86 + hash(x, y, 99) * 0.24),
+  // Road paint: a white bar down the middle of the block, on asphalt.
+  roadLine: (x, y) => (x >= 5 && x <= 10 ? shade(rgb('#f1f1ec'), 0.95 + hash(x, y, 100) * 0.05) : shade(rgb('#3d3f45'), 0.86 + hash(x, y, 101) * 0.24)),
+  woolOrange: speckle('#e8823a', 102, 0.12),
+  woolCyan: speckle('#2fb8a0', 103, 0.12),
+  woolGrey: speckle('#6b6e78', 104, 0.12),
+  // A dark screen with a few rows of light text.
+  screen: (x, y) => (x === 0 || y === 0 || x === 15 || y === 15 ? rgb('#1d1d22') : y % 3 === 1 && x > 1 && x < 4 + Math.floor(hash(y, 0, 105) * 10) ? rgb('#9be3c0') : rgb('#22303a')),
+  // Office windows: two panes of dark glass set in a pale concrete frame.
+  facade: (x, y) => (x % 8 < 2 || y < 3 || y > 12 ? shade(rgb('#d4d8de'), 0.94 + hash(x, y, 106) * 0.08) : shade(rgb('#5f7896'), 0.9 + (y > 8 ? 0.12 : 0) + hash(x, y, 107) * 0.06)),
+  facadeLit: (x, y) => (x % 8 < 2 || y < 3 || y > 12 ? shade(rgb('#2a2d38'), 0.94 + hash(x, y, 108) * 0.08) : shade(rgb('#ffd79a'), 0.9 + hash(x, y, 109) * 0.12)),
   lantern: (x, y) => (x <= 2 || x >= 13 || y <= 2 || y >= 13 ? rgb('#3b3b42') : shade(rgb('#ffcf6a'), 0.92 + hash(x, y, 98) * 0.12)),
   workbenchTop: (x, y) => (x === 0 || y === 0 || x === 15 || y === 15 ? rgb('#6b4a2a') : x % 5 === 2 || y % 5 === 2 ? rgb('#8d6a3e') : shade(rgb('#c09359'), 0.92 + hash(x, y, 51) * 0.12)),
   workbenchSide: (x, y) => (y < 3 ? shade(rgb('#a77a47'), 0.9) : (x === 3 || x === 12) && y > 5 && y < 13 ? rgb('#7d7d82') : boards('#b88c56', 52)(x, y)),
@@ -302,6 +313,20 @@ const PAINTERS: Readonly<Record<Tile, Painter>> = {
   woolWhite: speckle('#eceae4', 61, 0.08),
   pumpkin: (x, y) => (x % 4 === 0 ? rgb('#c46a14') : shade(rgb('#e3861c'), 0.92 + hash(x, y, 62) * 0.12)),
   lamp: (x, y) => (x === 0 || y === 0 || x === 15 || y === 15 || x === 7 || y === 7 ? rgb('#4a3a2a') : shade(rgb('#ffe2a0'), 0.9 + hash(x, y, 63) * 0.15)),
+  // A blocky sun: a stepped disc (no anti-aliasing, so the rim reads as jagged pixels) with a brighter core.
+  sunDisc: (x, y) => {
+    const d = Math.hypot(x - 7.5, y - 7.5);
+    if (d > 7.5) return null;
+    return shade(rgb('#fff1a6'), d < 4 ? 1.1 : 0.9 + (7.5 - d) * 0.02);
+  },
+  // A blocky moon: a paler stepped disc with a few square craters.
+  moonDisc: (x, y) => {
+    const d = Math.hypot(x - 7.5, y - 7.5);
+    if (d > 7.5) return null;
+    const craters: ReadonlyArray<readonly [number, number]> = [[5, 5], [10, 6], [7, 10], [4, 11]];
+    const crater = craters.some(([cx, cy]) => Math.hypot(x - cx, y - cy) < 1.4);
+    return shade(rgb('#dfe4f2'), crater ? 0.8 : 0.96 + hash(x, y, 110) * 0.08);
+  },
 };
 
 export function tilePixels(tile: Tile): Uint8Array {

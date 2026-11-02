@@ -1,4 +1,4 @@
-import { serverMessageSchema, type ServerMessage } from '@unpaidinterns/core';
+import { serverMessageSchema, type ServerMessage } from '@mycraft/core';
 
 export type ConnectionStatus = 'connecting' | 'open' | 'closed';
 

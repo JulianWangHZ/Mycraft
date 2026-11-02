@@ -1,4 +1,4 @@
-import type { AgentEvent } from '@unpaidinterns/core';
+import type { AgentEvent } from '@mycraft/core';
 
 export type ParseResult =
   | { kind: 'event'; event: AgentEvent }

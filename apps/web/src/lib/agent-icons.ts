@@ -1,4 +1,4 @@
-import type { AgentKind } from '@unpaidinterns/core';
+import type { AgentKind } from '@mycraft/core';
 import claude from '@lobehub/icons-static-svg/icons/claude-color.svg?url';
 import codex from '@lobehub/icons-static-svg/icons/codex-color.svg?url';
 import gemini from '@lobehub/icons-static-svg/icons/gemini-color.svg?url';
