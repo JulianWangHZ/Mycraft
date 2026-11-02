@@ -23,28 +23,36 @@ Mycraft watches the session logs your agents already write and turns them into s
 
 <table>
 <tr>
+<td width="50%"><img src=".github/assets/village.jpg" alt="My village, the default block-world scene with farms, docks and cabins"></td>
 <td width="50%"><img src=".github/assets/office-day.jpg" alt="The office tower by day, with agents at their desks"></td>
-<td width="50%"><img src=".github/assets/office-night.jpg" alt="The same office at night, lights on"></td>
 </tr>
 <tr>
+<td><b>My village.</b> The default scene: a cosy block-world village where every intern has a cabin.</td>
 <td><b>The office.</b> A cut-away tower with a room per agent. Each session gets a desk and a name tag with its project.</td>
-<td><b>Day and night.</b> One switch changes both the scene and the interface.</td>
 </tr>
 <tr>
+<td><img src=".github/assets/office-night.jpg" alt="The same office at night, lights on"></td>
 <td><img src=".github/assets/park-night.jpg" alt="The theme park at night"></td>
-<td><img src=".github/assets/pool-day.jpg" alt="The pool club by day"></td>
 </tr>
 <tr>
+<td><b>Day and night.</b> One switch changes both the scene and the interface.</td>
 <td><b>The theme park.</b> Idle interns ride the coaster, the ferris wheel, the carousel and the drop tower.</td>
-<td><b>The pool club.</b> Working interns swim laps; the rest take the slide, the hot tub or a lounger.</td>
 </tr>
 <tr>
+<td><img src=".github/assets/pool-day.jpg" alt="The pool club by day"></td>
 <td><img src=".github/assets/board.jpg" alt="The board view with three lanes of session cards"></td>
-<td><img src=".github/assets/pip.jpg" alt="The compact picture-in-picture window"></td>
 </tr>
 <tr>
+<td><b>The pool club.</b> Working interns swim laps; the rest take the slide, the hot tub or a lounger.</td>
 <td><b>The board.</b> The same sessions as cards, in three lanes: needs you, working, done.</td>
+</tr>
+<tr>
+<td><img src=".github/assets/pip.jpg" alt="The compact picture-in-picture window"></td>
+<td></td>
+</tr>
+<tr>
 <td><b>Picture-in-picture.</b> A small always-on-top window that keeps watching while you work.</td>
+<td></td>
 </tr>
 </table>
 
@@ -133,7 +141,7 @@ The gear in the top-right corner has everything:
 
 | Setting | Options |
 |---|---|
-| Scene | Office, Theme park, Pool |
+| Scene | Village, Office, Theme park, Pool |
 | Appearance | Day, Night |
 | Show agents | Turn Claude, Codex or Gemini on or off |
 | Language | English, 中文 |
